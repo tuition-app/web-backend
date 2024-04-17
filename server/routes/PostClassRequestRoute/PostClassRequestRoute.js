@@ -1,5 +1,5 @@
 const express = require("express");
-const { PostClassRequestController, GetClassRequestController, NotificationController } = require("../../controllers/PostClassRequestController/PostClassRequestController");
+const { PostClassRequestController, GetClassRequestController, GetNotificationController } = require("../../controllers/PostClassRequestController/PostClassRequestController");
 const router = express.Router();
 
 // POST || CREATE CLASS REQUEST
@@ -11,7 +11,7 @@ router.get("/get-request",GetClassRequestController)
 
 
 // GET || GET CREATED CLASS REQUEST
-router.get("/notification",NotificationController)
+router.get("/get-notification",GetNotificationController)
 
 
 module.exports = router;

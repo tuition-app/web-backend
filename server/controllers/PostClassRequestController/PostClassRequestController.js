@@ -1,4 +1,4 @@
-const { PostClassRequest, Auth, PostCreate } = require('../../models');
+const { PostClassRequest, Auth, PostCreate , Notification } = require('../../models');
 
 
 const PostClassRequestController = async (req, res) => {
@@ -49,6 +49,10 @@ const PostClassRequestController = async (req, res) => {
 
     console.log("availabilityPost",availabilityPost);
 
+    const notification = await Notification.create({
+      notification : availabilityPost
+    })
+
     
     // if(availabilityPost.length > 0){
     //   res.status(200).send({
@@ -61,7 +65,7 @@ const PostClassRequestController = async (req, res) => {
     res.status(200).send({
           success: true,
           message: "Post Request Create Successfully",
-          data:data,
+          data:notification,
        });
 
 
@@ -99,9 +103,23 @@ const GetClassRequestController = async (req, res) => {
 }
 
 
-const NotificationController = async (req, res) => {
+const GetNotificationController = async (req, res) => {
+ try {
+   const notificationResponse = await Notification.findAll({});
 
+   res.status(200).send({
+     success: true,
+     message: "Notification Fetch Successfully",
+     data: notificationResponse
+   })
+ } catch (error) {
+   res.status(400).send({
+     success: false,
+     message: "Request Fetch Unsuccessfully",
+     error
+   })
+ }
 }
 
 
-module.exports = { PostClassRequestController, GetClassRequestController, NotificationController }
+module.exports = { PostClassRequestController, GetClassRequestController, GetNotificationController }
