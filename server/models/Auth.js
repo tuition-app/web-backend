@@ -22,6 +22,13 @@ module.exports = (Sequelize, DataTypes)=>{
               notEmpty: true
            }
        },
+       notification: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        validate: {
+            notEmpty: false
+        }
+    },
        ImageLink:{
          type: DataTypes.STRING,
            allowNull: false,
