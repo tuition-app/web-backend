@@ -53,7 +53,7 @@ const PostClassRequestController = async (req, res) => {
 
       console.log("matching Record :",matchingRecord);
 
-      if (matchingRecord) {+        
+      if (matchingRecord) {       
         await matchingRecord.update({ notification: matchingRecord});
       }else{
         const response = await Notification.create({ 
