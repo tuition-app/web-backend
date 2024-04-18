@@ -51,8 +51,10 @@ const PostClassRequestController = async (req, res) => {
         where: { googleId: matchingPosts[i].currentUserId }
       });
 
-      if (matchingRecord) {
-        await matchingRecord.update({ notification: matchingPosts[i] });
+      console.log("matching Record :",matchingRecord);
+
+      if (matchingRecord) {+        
+        await matchingRecord.update({ notification: matchingRecord});
       }else{
         const response = await Notification.create({ 
           googleId:matchingPosts[i].currentUserId,
