@@ -45,15 +45,22 @@ const PostClassRequestController = async (req, res) => {
     });
 
     console.log("Matching Posts:", matchingPosts);
-
+    
     for (let i = 0; i < matchingPosts.length; i++) {
-      const relatedUser = await Auth.findOne({ where: { googleId: matchingPosts[i].currentUserId } });
-      if (relatedUser) {
-            // Update notifications for the related user
-            await relatedUser.update({ notification: [i] });
-          }
-    }
+      const matchingRecord = await Notification.findOne({
+        where: { googleId: matchingPosts[i].currentUserId }
+      });
 
+      if (matchingRecord) {
+        await matchingRecord.update({ notification: matchingPosts[i] });
+      }else{
+        const response = await Notification.create({ 
+          googleId:matchingPosts[i].currentUserId,
+          notification: matchingPosts[i]  
+        });
+      }
+    }
+    
     res.status(200).send({
       success: true,
       message: "Post Request Created Successfully",
@@ -68,6 +75,7 @@ const PostClassRequestController = async (req, res) => {
     });
   }
 };
+
 
 
 
