@@ -1,4 +1,4 @@
-const { PostClassRequest, Auth, PostCreate } = require('../../models');
+const { PostClassRequest, Auth, PostCreate , Notification } = require('../../models');
 
 
 const PostClassRequestController = async (req, res) => {
@@ -7,21 +7,20 @@ const PostClassRequestController = async (req, res) => {
 
     const currentUserId = req.body.currentUserId;
 
-    const data = await Auth.findOne({ where: { googleId: currentUserId } })
+    const user = await Auth.findOne({ where: { googleId: currentUserId } });
 
-    if (!data) {
+    if (!user) {
       return res.status(400).send({
         success: false,
         message: "User Not Found"
-      })
+      });
     }
 
-    // Create a new post using the postCreate model
-    const result = await PostClassRequest.create({
+    const newPost = await PostClassRequest.create({
       currentUserId: req.body.currentUserId,
-      displayName: data.displayName,
-      ImageLink: data.ImageLink,
-      email: data.email,
+      displayName: user.displayName,
+      ImageLink: user.ImageLink,
+      email: user.email,
       title: req.body.title,
       about: req.body.about,
       fees: req.body.fees,
@@ -34,49 +33,54 @@ const PostClassRequestController = async (req, res) => {
       areas: req.body.area,
     });
 
-    // Match post
-    const CreatePostData = await PostCreate.findAll({})
-    const availabilityPost = []
+    // Find matching posts based on criteria
+    const matchingPosts = await PostCreate.findAll({
+      where: {
+        fees: req.body.fees,
+        subject: req.body.subject,
+        medium: req.body.medium,
+        platform: req.body.platform,
+        type: req.body.type
+      }
+    });
 
-    const createdPostLength = CreatePostData.length;
+    // console.log("Matching Posts:", matchingPosts);
 
-    for (let i = 0; i < createdPostLength; i++) {
-      if ((CreatePostData[i].fees == req.body.fees) && (CreatePostData[i].subject == req.body.subject) && (CreatePostData[i].medium == req.body.medium) && (CreatePostData[i].platform == req.body.platform) && (CreatePostData[i].type == req.body.type)){
-        // Send a success response with the created post data
-        availabilityPost.push(CreatePostData[i]);
-      }     
+    for (let i = 0; i < matchingPosts.length; i++) {
+      const matchingRecord = await Notification.findOne({
+        where: { googleId: matchingPosts[i].currentUserId }
+      });
+
+      // console.log("matching Record :",matchingRecord);
+
+      if (matchingRecord) {
+        // Update the existing notification record
+        await matchingRecord.update({ notification: matchingPosts[i] });
+      } else {
+        // Create a new notification record
+        await Notification.create({
+          googleId: matchingPosts[i].currentUserId,
+          notification: matchingPosts[i]
+        });
+      }
     }
 
-    console.log("availabilityPost",availabilityPost);
-
-    
-    // if(availabilityPost.length > 0){
-    //   res.status(200).send({
-    //     success: true,
-    //     message: "Post Request Matching Successfully",
-    //     availabilityPost:availabilityPost.length,
-    //  });
-    // }
-
     res.status(200).send({
-          success: true,
-          message: "Post Request Create Successfully",
-          data:data,
-       });
-
-
-    // console.log(createdPostLength);
-    // Send a success response with the created post data
-    
+      success: true,
+      message: "Post Request Created Successfully",
+      data: matchingPosts,
+    });
 
   } catch (error) {
     res.status(400).send({
       success: false,
       message: error.message,
-      error
-    })
+      error,
+    });
   }
-}
+};
+
+
 
 
 const GetClassRequestController = async (req, res) => {
@@ -99,9 +103,23 @@ const GetClassRequestController = async (req, res) => {
 }
 
 
-const NotificationController = async (req, res) => {
+const GetNotificationController = async (req, res) => {
+ try {
+   const notificationResponse = await Notification.findAll({});
 
+   res.status(200).send({
+     success: true,
+     message: "Notification Fetch Successfully",
+     data: notificationResponse
+   })
+ } catch (error) {
+   res.status(400).send({
+     success: false,
+     message: "Request Fetch Unsuccessfully",
+     error
+   })
+ }
 }
 
 
-module.exports = { PostClassRequestController, GetClassRequestController, NotificationController }
+module.exports = { PostClassRequestController, GetClassRequestController, GetNotificationController }

@@ -36,12 +36,7 @@ route.get('/auth/google/callback', passport.authenticate('google', {failureRedir
 
 // Route for handling successful login
 route.get("/login/success", (req, res) => {
-    // if (req.user) {
-        
-    // } else {
-    //     res.status(403).json({ error: true, message: "Not Authorized" });
-    // }
-    console.log(req);
+    console.log(req);   
 
     res.status(200).send({
         success:true,
@@ -51,7 +46,7 @@ route.get("/login/success", (req, res) => {
 
 });
 
-// Route for handling Google ID token verification
+// Get curretn user all details
 route.post("/googleid", authController);
 
 module.exports = route;

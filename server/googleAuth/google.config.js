@@ -16,7 +16,7 @@ const googleAuth = (passport) => {
     console.log("Profile details are:", profile);
     // localStorage.setItem("profile", profile.id);
 
-    const token = jwt.sign({id:profile.id},process.env.JWT_SECRET,{expiresIn:"1d"});
+    const token = jwt.sign({id:profile.id},process.env.JWT_SECRET,{expiresIn:"7d"});
     console.log(token);
 
     // localStorage.setItem("token",token);
@@ -30,10 +30,7 @@ const googleAuth = (passport) => {
       jwt:token
 
     }).then((user) => {
-      console.log("Google signIn Successfull and Database Data added successfull");
-
-      
-      
+      console.log("Google signIn Successfull and Database Data added successfull");     
     })
 
     callback(null, profile);
