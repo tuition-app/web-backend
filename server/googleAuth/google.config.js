@@ -16,7 +16,7 @@ const googleAuth = (passport) => {
     console.log("Profile details are:", profile);
     // localStorage.setItem("profile", profile.id);
 
-    const token = jwt.sign({id:profile.id},process.env.JWT_SECRET,{expiresIn:"1d"});
+    const token = jwt.sign({id:profile.id},process.env.JWT_SECRET,{expiresIn:"7d"});
     console.log(token);
 
     // localStorage.setItem("token",token);

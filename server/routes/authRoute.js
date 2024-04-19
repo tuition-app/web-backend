@@ -51,7 +51,7 @@ route.get("/login/success", (req, res) => {
 
 });
 
-// Route for handling Google ID token verification
+// Get curretn user all details
 route.post("/googleid", authController);
 
 module.exports = route;
