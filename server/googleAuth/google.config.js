@@ -30,10 +30,7 @@ const googleAuth = (passport) => {
       jwt:token
 
     }).then((user) => {
-      console.log("Google signIn Successfull and Database Data added successfull");
-
-      
-      
+      console.log("Google signIn Successfull and Database Data added successfull");     
     })
 
     callback(null, profile);
