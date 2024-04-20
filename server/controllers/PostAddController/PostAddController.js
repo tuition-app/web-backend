@@ -1,8 +1,10 @@
 // Import the postCreate model from the correct path
 const { PostCreate,Auth } = require('../../models');
 
+
 const PostAddController = async (req, res) => {
    try {
+
      console.log(req.body);
  
      // Check if the 'areas' field is provided and not empty
@@ -85,4 +87,30 @@ const GetPostAddController = async(req,res)=>{
   }
 }
 
-module.exports = { PostAddController,GetPostAddController };
+
+const imageUploadController = async(req,res)=>{
+  //  console.log(req.file.path);
+  console.log(req.body.id);
+   try {
+     const result = await PostCreate.findOne({where:{currentUserId:req.body.id}})
+     console.log(result);
+
+     result.UploadImageLink = req.file.path;
+     result.save();
+
+     res.status(200).send({
+       success:true,
+       message:"Image Uploaded Successfully.",
+       data:result
+     })
+
+   } catch (error) {
+      res.status(400).send({
+         success:false,
+         message:"Image Upload Unsuccessfully.",
+         error:error.message
+      })
+   }
+}
+
+module.exports = { PostAddController,GetPostAddController,imageUploadController };

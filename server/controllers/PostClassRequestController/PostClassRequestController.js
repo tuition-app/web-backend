@@ -23,7 +23,7 @@ const PostClassRequestController = async (req, res) => {
       email: user.email,
       title: req.body.title,
       about: req.body.about,
-      fees: req.body.fees,
+      // fees: req.body.fees,
       perHour: req.body.perHour,
       perMonth: req.body.perMonth,
       subject: req.body.subject,
@@ -36,7 +36,7 @@ const PostClassRequestController = async (req, res) => {
     // Find matching posts based on criteria
     const matchingPosts = await PostCreate.findAll({
       where: {
-        fees: req.body.fees,
+        // fees: req.body.fees,
         subject: req.body.subject,
         medium: req.body.medium,
         platform: req.body.platform,
