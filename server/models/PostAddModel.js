@@ -107,7 +107,14 @@ module.exports = (Sequelize, DataTypes) => {
             validate: {
                 notEmpty: true
             }
-        }
+        },
+        UploadImageLink: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            validate: {
+                notEmpty: false
+            }
+        },
 
     })
 

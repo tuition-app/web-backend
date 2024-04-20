@@ -43,13 +43,14 @@ module.exports = (Sequelize, DataTypes) => {
             validate: {
                 notEmpty: true
             }
-        }, fees: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                notEmpty: true
-            }
-        },
+        }, 
+        // fees: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: false,
+        //     validate: {
+        //         notEmpty: true
+        //     }
+        // },
         perHour: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
