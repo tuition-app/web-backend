@@ -1,41 +1,49 @@
 const { PostCreate } = require('../../models');
 
 const BrowsClassController = async (req, res) => {
-        try {
-                console.log(req.body);
-                const subject = req.body.subject || null;
-                const classArea = req.body.classArea || null;
+  try {
+      console.log(req.body);
+      const { subject, classArea, sinhala, english, tamil, online, physical, group, individual } = req.body;
 
+      const filterData = [];
 
-                const filterData = [];
+      const data = await PostCreate.findAll({}); // Assuming PostCreate is a Sequelize model
 
-                const data = await PostCreate.findAll({});
+      console.log(data.length);
 
-                console.log(data.length);
+      for (let i = 0; i < data.length; i++) {
+          let areas = data[i].areas.map(area => area.trim());
+          console.log(areas.includes(classArea));
 
-                for (let i = 0; i < data.length; i++) {
-                        let areas = data[i].areas.map(area => area.trim());
-                        console.log(areas.includes(classArea));
-                       
-                        if((!subject || data[i].subject === subject) && (!classArea || areas.includes(classArea))){
-                                filterData.push(data[i]);
-                        }
+          if ((!subject || data[i].subject === subject) &&
+              (!classArea || areas.includes(classArea)) &&
+              (!sinhala || data[i].medium === sinhala) &&
+              (!english || data[i].medium === english) &&
+              (!tamil || data[i].medium === tamil) &&
+              (!online || data[i].platform === online) &&
+              (!physical || data[i].platform === physical) &&
+              (!group || data[i].type === group) &&
+              (!individual || data[i].type === individual) 
+          ) {
+              filterData.push(data[i]);
+          }
+      }
 
-                }
+      res.status(200).send({
+          success: true,
+          message: "Data fetched successfully",
+          data: filterData
+      });
 
-                res.status(200).send({
-                        success: true,
-                        message: "Data fetched successfully",
-                        data: filterData
-                });
-
-        } catch (error) {
-                res.status(400).send({
-                        success: false,
-                        message: error.message
-                });
-        }
+  } catch (error) {
+      console.error(error); // Log the error for debugging
+      res.status(400).send({
+          success: false,
+          message: error.message
+      });
+  }
 };
+
 
 
 

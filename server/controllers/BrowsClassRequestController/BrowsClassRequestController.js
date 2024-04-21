@@ -71,8 +71,8 @@ const BrowsClassRequestController = async(req,res)=>{
 
 const FilterClassRequestController = async(req,res)=>{
  try {
-  const subject = req.body.subject || null;
-  const classArea = req.body.classArea || null;
+  console.log(req.body);
+  const { subject, classArea, sinhala, english, tamil, online, physical, group, individual } = req.body;
 
   const filterData = [];
 
@@ -81,19 +81,27 @@ const FilterClassRequestController = async(req,res)=>{
   console.log(data.length);
 
   for (let i = 0; i < data.length; i++) {
-          let areas = data[i].areas.map(area => area.trim());
-          console.log(areas.includes(classArea));
-         
-          if((!subject || data[i].subject === subject) && (!classArea || areas.includes(classArea))){
-                  filterData.push(data[i]);
-          }
+      let areas = data[i].areas.map(area => area.trim());
+      console.log(areas.includes(classArea));
 
+      if ((!subject || data[i].subject === subject) &&
+          (!classArea || areas.includes(classArea)) &&
+          (!sinhala || data[i].medium === sinhala) &&
+          (!english || data[i].medium === english) &&
+          (!tamil || data[i].medium === tamil) &&
+          (!online || data[i].platform === online) &&
+          (!physical || data[i].platform === physical) &&
+          (!group || data[i].type === group) &&
+          (!individual || data[i].type === individual) 
+      ) {
+          filterData.push(data[i]);
+      }
   }
 
   res.status(200).send({
-          success: true,
-          message: "Data fetched successfully",
-          data: filterData
+      success: true,
+      message: "Data fetched successfully",
+      data: filterData
   });
 
 
