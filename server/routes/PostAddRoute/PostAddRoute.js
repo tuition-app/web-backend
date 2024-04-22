@@ -21,14 +21,14 @@ const upload = multer({
 })
 
 // POST || POST CREATE DATA
-router.post("/post" ,PostAddController)
+router.post("/post" ,upload.single('image') ,PostAddController)
 
 // GET || GET DATA
 router.get("/get-post",GetPostAddController)
 
 
-// Upload images
-router.post("/upload", upload.single('image') , imageUploadController)
+// // Upload images
+// router.post("/upload", upload.single('image') , imageUploadController)
 
 
 
