@@ -4,7 +4,7 @@ const { PostCreate,Auth } = require('../../models');
 
 const PostAddController = async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(req.body.title);
     console.log("image path : ", req.file.path);
 
     // Check if the 'areas' field is provided and not empty
@@ -17,7 +17,7 @@ const PostAddController = async (req, res) => {
 
     // Validate other fields if necessary
 
-    const currentUserId = req.body.currentUserId;
+    const currentUserId = req.body.id;
 
     // Assume Auth and PostCreate models are properly defined
     const data = await Auth.findOne({ where: { googleId: currentUserId } });
