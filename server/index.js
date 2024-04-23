@@ -20,6 +20,8 @@ const PostAddRoute = require("./routes/PostAddRoute/PostAddRoute");
 const PostClassRequestRoute = require("./routes/PostClassRequestRoute/PostClassRequestRoute");
 const BrowsClassRoute = require("./routes/BrowsClassRoute/BrowsClassRoute")
 const BrowsClassRequestRoute = require("./routes/BrowsClassRequestRoute/BrowsClassRequestRoute")
+const GetSubjectRoute = require("./routes/GetSubjectRoute/GetSubjectRoute")
+const GetDistricRoute = require("./routes/GetDistricRoute/GetDistricRoute")
 
 const app = express();
 
@@ -62,6 +64,11 @@ app.use("/api/v1/left_filter", BrowsClassRoute);
 // BrowsClassRequestController
 app.use("/api/v1/left_filter", BrowsClassRequestRoute);
 app.use("/api/v1/middle_filter", BrowsClassRequestRoute);
+
+
+// get subject data
+app.use("/api/v1/subject", GetSubjectRoute);
+app.use("/api/v1/district", GetDistricRoute);
 
 
 // app.get("/", (req, res, next) => {
