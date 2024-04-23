@@ -4,7 +4,15 @@ const { PostCreate,Auth } = require('../../models');
 
 const PostAddController = async (req, res) => {
   try {
-    console.log(req.body.title);
+    console.log(req.body);
+    console.log("image path : ", req.file);
+
+    // Check if file upload was successful
+    if (!req.file || req.file.path === undefined) {
+       // Assign a default image path
+       req.file = { path: "public\\image\\image_1713841993198.png" };
+    }
+
     console.log("image path : ", req.file.path);
 
     // Check if the 'areas' field is provided and not empty
@@ -60,6 +68,7 @@ const PostAddController = async (req, res) => {
     });
   }
 };
+
 
  
 
