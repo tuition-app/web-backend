@@ -3,61 +3,73 @@ const { PostCreate,Auth } = require('../../models');
 
 
 const PostAddController = async (req, res) => {
-   try {
+  try {
+    console.log(req.body);
+    console.log("image path : ", req.file);
 
-     console.log(req.body);
- 
-     // Check if the 'areas' field is provided and not empty
-     if (!req.body.areas || req.body.areas.length === 0) {
-       return res.status(400).send({
-         success: false,
-         message: "Error: 'areas' field is required and cannot be empty."
-       });
-     }
+    // Check if file upload was successful
+    if (!req.file || req.file.path === undefined) {
+       // Assign a default image path
+       req.file = { path: "public\\image\\image_1713841993198.png" };
+    }
 
-     const currentUserId  = req.body.currentUserId;
+    console.log("image path : ", req.file.path);
 
-     const data = await Auth.findOne({where: {googleId: currentUserId}})
+    // Check if the 'areas' field is provided and not empty
+    if (!req.body.areas || req.body.areas.length === 0) {
+      return res.status(400).send({
+        success: false,
+        message: "Error: 'areas' field is required and cannot be empty."
+      });
+    }
 
-     console.log("Data" , data);
+    // Validate other fields if necessary
 
- 
-     // Create a new post using the PostCreate model
-     const result = await PostCreate.create({
-       currentUserId: req.body.currentUserId,
-       displayName:data.displayName,
-       ImageLink:data.ImageLink,
-       email:data.email,
-       title: req.body.title,
-       about: req.body.about,
-       fees: req.body.fees,
-       perHour: req.body.perHour,
-       perMonth: req.body.perMonth,
-       subject: req.body.subject,
-       medium: req.body.medium,
-       platform: req.body.platform,
-       type: req.body.type,
-       areas: req.body.areas,
-     });
- 
-     console.log(result);
- 
-     // Send a success response with the created post data
-     res.status(200).send({
-       success: true,
-       message: "Post Created Successfully",
-       data: result
-     });
-     
-   } catch (error) {
-     // Handle errors and send an error response
-     res.status(400).send({
-       success: false,
-       message: "Error occurred while creating Post",
-       error: error.message
-     });
-   }
- };
+    const currentUserId = req.body.id;
+
+    // Assume Auth and PostCreate models are properly defined
+    const data = await Auth.findOne({ where: { googleId: currentUserId } });
+
+    console.log("Data", data);
+
+    // Create a new post using the PostCreate model
+    const result = await PostCreate.create({
+      currentUserId: req.body.id,
+      displayName: data.displayName,
+      ImageLink: data.ImageLink,
+      email: data.email,
+      title: req.body.title,
+      about: req.body.about,
+      fees: req.body.fees,
+      perHour: req.body.perHour,
+      perMonth: req.body.perMonth,
+      subject: req.body.subject,
+      medium: req.body.medium,
+      platform: req.body.platform,
+      type: req.body.type,
+      areas: req.body.areas,
+      UploadImageLink: req.file.path
+    });
+
+    console.log(result);
+
+    // Send a success response with the created post data
+    res.status(200).send({
+      success: true,
+      message: "Post Created Successfully",
+      data: result
+    });
+  } catch (error) {
+    // Handle errors and send an error response
+    res.status(400).send({
+      success: false,
+      message: "Error occurred while creating Post",
+      error: error.message
+    });
+  }
+};
+
+
  
 
 const GetPostAddController = async(req,res)=>{
