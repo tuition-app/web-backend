@@ -1,19 +1,8 @@
 const { PostClassRequest } = require("../../models")
 
-const BrowsClassRequestController = async(req,res)=>{
+const BrowsClassRequestController = async (req, res) => {
   try {
-    // console.log(req.body);
-    const subject = req.body.subject || null;
-    const location = req.body.location || null;
-    const sinhala = req.body.sinhala || null;
-    const english = req.body.english || null;
-    const tamil = req.body.tamil || null;
-    const online = req.body.online || null;
-    const physical = req.body.physical || null;
-    const group = req.body.group || null;
-    const individual = req.body.individual || null;
-
-    // console.log(subject, location, sinhala, english, tamil, online, physical, group, individual);
+    const { subject, location, sinhala, english, tamil, online, physical, group, individual } = req.body;
 
     const data = await PostClassRequest.findAll({});
     const filteredData = data.filter(item => {
@@ -23,37 +12,20 @@ const BrowsClassRequestController = async(req,res)=>{
         shouldInclude = false;
       }
 
-        console.log(item.areas);
-      if(!item.areas.includes(location)){
-          shouldInclude = false;
-      }
-
-
-      if (shouldInclude && sinhala && item.medium !== sinhala) {
+      // Check if at least one area matches the provided location
+      if (location && !item.areas.some(area => area === location)) {
         shouldInclude = false;
       }
 
-      if (shouldInclude && english && item.medium !== english) {
+      if (shouldInclude && (sinhala || english || tamil) && ![sinhala, english, tamil].includes(item.medium)) {
         shouldInclude = false;
       }
 
-      if (shouldInclude && tamil && item.medium !== tamil) {
+      if (shouldInclude && (online || physical) && ![online, physical].includes(item.platform)) {
         shouldInclude = false;
       }
 
-      if (shouldInclude && online && item.platform !== online) {
-        shouldInclude = false;
-      }
-
-      if (shouldInclude && physical && item.platform !== physical) {
-        shouldInclude = false;
-      }
-
-      if (shouldInclude && group && item.type !== group) {
-        shouldInclude = false;
-      }
-
-      if (shouldInclude && individual && item.type !== individual) {
+      if (shouldInclude && (group || individual) && ![group, individual].includes(item.type)) {
         shouldInclude = false;
       }
 
@@ -67,13 +39,13 @@ const BrowsClassRequestController = async(req,res)=>{
     });
 
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.error(error);
     res.status(400).send({
-        success: false,
-        message: error.message
+      success: false,
+      message: error.message
     });
   }
-}
+};
 
 
 const FilterClassRequestController = async(req,res)=>{
