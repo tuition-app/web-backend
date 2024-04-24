@@ -23,6 +23,12 @@ const BrowsClassController = async (req, res) => {
         shouldInclude = false;
       }
 
+        console.log(item.areas);
+      if(!item.areas.includes(location)){
+          shouldInclude = false;
+      }
+
+
       if (shouldInclude && sinhala && item.medium !== sinhala) {
         shouldInclude = false;
       }
@@ -68,10 +74,6 @@ const BrowsClassController = async (req, res) => {
     // });
   }
 };
-
-
-
-
 
 
 const LeftBrowsClassController = async (req, res) => {
