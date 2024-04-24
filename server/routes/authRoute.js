@@ -28,7 +28,7 @@ route.use(passport.session());
 route.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Callback endpoint for Google authentication
-route.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: "http://localhost:5173/login",successRedirect: "http://localhost:5173/home"}), (req, res) => {
+route.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: "http://localhost:5173/login",successRedirect: "http://localhost:5173/homeFinal"}), (req, res) => {
     // This callback will be executed upon successful authentication
     console.log("User Authenticated");
 
