@@ -1,72 +1,51 @@
 const { PostClassRequest } = require("../../models")
 
-const BrowsClassRequestController = async(req,res)=>{
+const BrowsClassRequestController = async (req, res) => {
   try {
+    const { subject, location, sinhala, english, tamil, online, physical, group, individual } = req.body;
 
-    console.log(req.body);
-    const sinhala = req.body.sinhala;
-    const english = req.body.english;
-    const tamil = req.body.tamil;
-    const physical = req.body.physical;
-    const online = req.body.online;
-    const group = req.body.group;
-    const individual = req.body.individual;
+    const data = await PostClassRequest.findAll({});
+    const filteredData = data.filter(item => {
+      let shouldInclude = true;
 
-    const data = await PostClassRequest.findAll({})
+      if (subject && item.subject !== subject) {
+        shouldInclude = false;
+      }
 
-    const mediumArray = [];
-      
-          for (let i = 0; i < data.length; i++) {
-            const item = data[i];
-            let shouldInclude = true;
+      // Check if at least one area matches the provided location
+      if (location && !item.areas.some(area => area === location)) {
+        shouldInclude = false;
+      }
 
-            if (sinhala == null && english == null && tamil == null && online == null && physical == null && group == null && individual == null) {
-                mediumArray.push(item);
-            }
-      
-            if (english && item.medium !== 'English') {
-              shouldInclude = false;
-            }
-            if (sinhala && item.medium !== 'Sinhala') {
-              shouldInclude = false;
-            }
-            if (tamil && item.medium !== 'Tamil') {
-              shouldInclude = false;
-            }
-            if (online && item.platform !== 'Online') {
-              shouldInclude = false;
-            }
-            if (physical && item.platform !== 'Physical') {
-              shouldInclude = false;
-            }
-            if (group && item.type !== 'Group') {
-              shouldInclude = false;
-            }
-            if (individual && item.type !== 'Individual') {
-              shouldInclude = false;
-            }
-      
-            if (shouldInclude) {
-              mediumArray.push(item);
-            }
-          }
+      if (shouldInclude && (sinhala || english || tamil) && ![sinhala, english, tamil].includes(item.medium)) {
+        shouldInclude = false;
+      }
 
-//     console.log(data);
+      if (shouldInclude && (online || physical) && ![online, physical].includes(item.platform)) {
+        shouldInclude = false;
+      }
+
+      if (shouldInclude && (group || individual) && ![group, individual].includes(item.type)) {
+        shouldInclude = false;
+      }
+
+      return shouldInclude;
+    });
 
     res.status(200).send({
-        success:true,
-        message:"Data filter successfull",
-        data:mediumArray,
-    })
+      success: true,
+      message: "Data fetched successfully",
+      data: filteredData
+    });
 
-        
   } catch (error) {
-      res.status(400).send({
-        success:false,
-        message:error.message
-      })  
+    console.error(error);
+    res.status(400).send({
+      success: false,
+      message: error.message
+    });
   }
-}
+};
 
 
 const FilterClassRequestController = async(req,res)=>{
