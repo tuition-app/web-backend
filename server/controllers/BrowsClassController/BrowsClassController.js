@@ -68,10 +68,10 @@ const BrowsClassController = async (req, res) => {
 
   } catch (error) {
     console.error(error); // Log the error for debugging
-    // res.status(400).send({
-    //     success: false,
-    //     message: error.message
-    // });
+    res.status(400).send({
+        success: false,
+        message: error.message
+    });
   }
 };
 
