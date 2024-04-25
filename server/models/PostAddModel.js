@@ -115,6 +115,13 @@ module.exports = (Sequelize, DataTypes) => {
                 notEmpty: false
             }
         },
+        negotiable: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            validate: {
+                notEmpty: false
+            }
+        },
 
     })
 
