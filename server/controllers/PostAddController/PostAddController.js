@@ -32,6 +32,8 @@ const PostAddController = async (req, res) => {
 
     console.log("Data", data);
 
+    const priceNegotiable = req.body.negotiable === 'checked' ? true : false;
+
     // Create a new post using the PostCreate model
     const result = await PostCreate.create({
       currentUserId: req.body.id,
@@ -48,7 +50,8 @@ const PostAddController = async (req, res) => {
       platform: req.body.platform,
       type: req.body.type,
       areas: req.body.areas,
-      UploadImageLink: req.file.path
+      UploadImageLink: req.file.path,
+      negotiable : priceNegotiable
     });
 
     console.log(result);
