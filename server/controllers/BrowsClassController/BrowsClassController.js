@@ -6,7 +6,7 @@ const BrowsClassController = async (req, res) => {
 
     console.log(subject, location, sinhala, english, tamil, online, physical, group, individual);
 
-    const data = await PostCreate.findAll({});
+    const data = await PostCreate.findAll({}); // Assuming PostCreate is your Sequelize model
     const filteredData = data.filter(item => {
       let shouldInclude = true;
 
@@ -14,7 +14,6 @@ const BrowsClassController = async (req, res) => {
         shouldInclude = false;
       }
 
-      // Check if at least one area matches the provided location
       if (location && !item.areas.includes(location)) {
         shouldInclude = false;
       }
@@ -27,7 +26,7 @@ const BrowsClassController = async (req, res) => {
         shouldInclude = false;
       }
 
-      if (shouldInclude && (group || individual) && ![group, individual].includes(item.type)) {
+      if ((group && !item.type.includes(group)) || (individual && !item.type.includes(individual))) {
         shouldInclude = false;
       }
 
@@ -48,6 +47,9 @@ const BrowsClassController = async (req, res) => {
     });
   }
 };
+
+module.exports = BrowsClassController;
+
 
 
 const LeftBrowsClassController = async (req, res) => {
