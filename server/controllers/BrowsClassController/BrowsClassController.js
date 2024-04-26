@@ -22,7 +22,7 @@ const BrowsClassController = async (req, res) => {
         shouldInclude = false;
       }
 
-      if (shouldInclude && (online || physical) && ![online, physical].includes(item.platform)) {
+      if ((online && !item.platform.includes(online)) || (physical && !item.platform.includes(physical))) {
         shouldInclude = false;
       }
 
