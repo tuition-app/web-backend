@@ -80,8 +80,9 @@ module.exports = (Sequelize, DataTypes) => {
             }
         },
         platform: {
-            type: DataTypes.STRING,
+            type: DataTypes.JSON,   //store as a json directly
             allowNull: false,
+            defaultValue: [], // Default value is an empty array
             validate: {
                 notEmpty: true
             }
