@@ -2,7 +2,7 @@ const { PostClassRequest } = require("../../models")
 
 const BrowsClassRequestController = async (req, res) => {
   try {
-    const { subject, location, sinhala, english, tamil, online, physical, group, individual } = req.body;
+    const { subject, location, sinhala, english, tamil, online, physical, group, individual,mass } = req.body;
 
     const data = await PostClassRequest.findAll({});
     const filteredData = data.filter(item => {
@@ -25,7 +25,7 @@ const BrowsClassRequestController = async (req, res) => {
         shouldInclude = false;
       }
 
-      if ((group && !item.type.includes(group)) || (individual && !item.type.includes(individual))) {
+      if ((group && !item.type.includes(group)) || (individual && !item.type.includes(individual)) || (mass && !item.type.includes(mass))) {
         shouldInclude = false;
       }
 
