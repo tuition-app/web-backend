@@ -1,9 +1,14 @@
 require('dotenv').config(); // Load environment variables from .env file
 
 const express = require('express');
+
+// const http = require("http");
 const cors = require('cors');
+// const { Server } = require("socket.io");
+
 const passport = require("passport");
 const session = require("express-session");
+
 
 const db = require("./models");
 
@@ -24,14 +29,33 @@ const GetSubjectRoute = require("./routes/GetSubjectRoute/GetSubjectRoute")
 const GetDistricRoute = require("./routes/GetDistricRoute/GetDistricRoute")
 const GetPlatformRoute = require("./routes/GetPlatformRoute/GetPlatformRoute")
 const GetClassTypeRoute = require("./routes/GetClassTypeRoute/GetClassTypeRoute")
+const MessageRoute = require("./routes/MessageRoute/MessageRoute")
 
 const app = express();
-
-const PORT = process.env.PORT || 5000;
-
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'))
+
+// const server = http.createServer(app);
+
+// const io = new Server(server, {
+//     path: "/",
+//     cors:{
+//       origin:"http://localhost:5173",
+//       methods:["GET","POST"],
+//     },
+//     // allowEIO3: true,
+//   });
+  
+
+// io.on("connection", (socket) => {
+//     console.log("A user connected");
+  
+//     socket.on("disconnect", () => {
+//       console.log("User disconnected");
+//     });
+//   });
+
 
 app.use(
     session({
@@ -45,6 +69,13 @@ app.use(
         }
     })
 );
+
+
+app.get("/",(req,res)=>{
+   res.status(200).send({
+      message:"Hello World"
+   })
+})
 
 // Initialize Passport after express-session
 app.use(passport.initialize());
@@ -81,10 +112,16 @@ app.use("/api/v1/platform", GetPlatformRoute);
 app.use("/api/v1/class", GetClassTypeRoute);
 
 
+// post messages
+app.use("/api/v1/post_message",MessageRoute)
+
+
 // app.get("/", (req, res, next) => {
 //     res.send("<a href='http://localhost:3000/api/auth/google'>Login with Google</a>");
 //     next();
 // });
+
+const PORT = process.env.PORT || 5000;
 
 db.sequelize.sync().then(() => {
     console.log("SQL database is connected");
