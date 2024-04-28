@@ -1,9 +1,14 @@
 require('dotenv').config(); // Load environment variables from .env file
 
 const express = require('express');
+
+const http = require("http");
 const cors = require('cors');
+const { Server } = require("socket.io");
+
 const passport = require("passport");
 const session = require("express-session");
+
 
 const db = require("./models");
 
@@ -27,11 +32,22 @@ const GetClassTypeRoute = require("./routes/GetClassTypeRoute/GetClassTypeRoute"
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
+const io = new Server(server);
+
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'))
+
+io.on("connection", (socket) => {
+    console.log("A user connected");
+  
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
+    });
+  });
+
 
 app.use(
     session({
@@ -85,6 +101,8 @@ app.use("/api/v1/class", GetClassTypeRoute);
 //     res.send("<a href='http://localhost:3000/api/auth/google'>Login with Google</a>");
 //     next();
 // });
+
+const PORT = process.env.PORT || 5000;
 
 db.sequelize.sync().then(() => {
     console.log("SQL database is connected");
