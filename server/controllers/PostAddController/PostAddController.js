@@ -5,7 +5,7 @@ const { PostCreate,Auth } = require('../../models');
 const PostAddController = async (req, res) => {
   try {
     console.log(req.body);
-    console.log("image path : ", req.file);
+    // console.log("image path : ", req.file);
 
     // Check if file upload was successful
     if (!req.file || req.file.path === undefined) {
@@ -13,7 +13,7 @@ const PostAddController = async (req, res) => {
        req.file = { path: "public\\image\\image_1713841993198.png" };
     }
 
-    console.log("image path : ", req.file.path);
+    // console.log("image path : ", req.file.path);
 
     // Check if the 'areas' field is provided and not empty
     if (!req.body.areas || req.body.areas.length === 0) {
@@ -30,13 +30,13 @@ const PostAddController = async (req, res) => {
     // Assume Auth and PostCreate models are properly defined
     const data = await Auth.findOne({ where: { googleId: currentUserId } });
 
-    console.log("Data", data);
+    // console.log("Data", data);
 
     const priceNegotiable = req.body.negotiable === 'checked' ? true : false;
 
     // Create a new post using the PostCreate model
     const result = await PostCreate.create({
-      currentUserId: req.body.id,
+      currentUserId:req.body.id,
       displayName: data.displayName,
       ImageLink: data.ImageLink,
       email: data.email,
@@ -72,8 +72,6 @@ const PostAddController = async (req, res) => {
   }
 };
 
-
- 
 
 const GetPostAddController = async(req,res)=>{
   try {
