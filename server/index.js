@@ -30,6 +30,7 @@ const GetDistricRoute = require("./routes/GetDistricRoute/GetDistricRoute")
 const GetPlatformRoute = require("./routes/GetPlatformRoute/GetPlatformRoute")
 const GetClassTypeRoute = require("./routes/GetClassTypeRoute/GetClassTypeRoute")
 const MessageRoute = require("./routes/MessageRoute/MessageRoute")
+const ReplyRoute = require("./routes/RepliedRoute/RepliedRoute")
 
 const app = express();
 app.use(cors());
@@ -114,6 +115,9 @@ app.use("/api/v1/class", GetClassTypeRoute);
 
 // post messages
 app.use("/api/v1/post_message",MessageRoute)
+
+// Reply message
+app.use("/api/v1/send",ReplyRoute)
 
 
 // app.get("/", (req, res, next) => {

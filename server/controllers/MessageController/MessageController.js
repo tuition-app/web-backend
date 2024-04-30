@@ -34,7 +34,9 @@ const MessageDataController = async(req,res)=>{
      try {
         console.log(req.body);
         const currentUserId = req.body.currentUserId
+        const matchingUserId = req.body.matchingUserId
         const receive_messages = []
+        const matchingMessages = []
 
         const messageData = await MessageModel.findAll({})
 
@@ -45,10 +47,18 @@ const MessageDataController = async(req,res)=>{
           
         }
 
+        for (let j = 0; j < receive_messages.length; j++) {
+          if (receive_messages[j].senderId === matchingUserId) {
+            matchingMessages.push(receive_messages[j])
+          }
+          
+        }
+
         res.status(200).send({
             success:true,
             message:"Message Data Fetch Successfull",
-            receive_messages
+            receive_messages,
+            matchingMessages
         })
 
 
