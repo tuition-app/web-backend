@@ -124,6 +124,14 @@ module.exports = (Sequelize, DataTypes) => {
                 notEmpty: false
             }
         },
+        // isAccepted
+        isAccepted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            validate: {
+                notEmpty: true
+            }
+        },
 
     })
 
