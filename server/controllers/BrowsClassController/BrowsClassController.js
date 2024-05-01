@@ -138,8 +138,32 @@ const getOneDetailsController = async(req,res)=>{
      })
    }
 }    
+
+
+
+// GET one user created all post
+const getConsideringPostController = async (req, res) => {
+  try {
+   console.log(req.body);
+   
+   const createdPost = await PostCreate.findAll({where: {currentUserId: req.body.currentUserId,},});
+
+   res.status(200).send({
+     success: true,
+     message: "Data fetched successfully",
+     data: createdPost,
+   })
+
+
+  } catch (error) {
+     res.status(400).send({
+       success: false,
+       message: error.message,
+     })
+  }
+}
       
 
 
 
-module.exports = { BrowsClassController,LeftBrowsClassController,getOneDetailsController };
+module.exports = { BrowsClassController,LeftBrowsClassController,getOneDetailsController,getConsideringPostController };

@@ -1,5 +1,5 @@
 const express = require("express");
-const { BrowsClassController, LeftBrowsClassController, getOneDetailsController } = require("../../controllers/BrowsClassController/BrowsClassController");
+const { BrowsClassController, LeftBrowsClassController, getOneDetailsController, getConsideringPostController } = require("../../controllers/BrowsClassController/BrowsClassController");
 
 const router = express.Router();
 
@@ -11,8 +11,13 @@ router.post("/details",BrowsClassController)
 router.post("/filter",LeftBrowsClassController)
 
 
-// GET || class details
+// POST || class details
 router.post("/OneDetails",getOneDetailsController)
+
+
+// POST || get considering people post
+router.post("/consideringPost",getConsideringPostController)
+
 
 
 module.exports = router;
