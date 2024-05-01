@@ -118,9 +118,28 @@ const LeftBrowsClassController = async (req, res) => {
         }
       };
       
-      module.exports = LeftBrowsClassController;
+
+const getOneDetailsController = async(req,res)=>{
+   try {
+    console.log(req.body);
+    const postId = req.body.postId;
+    const onePostDetails = await PostCreate.findOne({where: {id: postId,},});
+    
+    res.status(200).send({
+      success: true,
+      message: "Data fetched successfully",
+      data: onePostDetails,
+    })
+
+   } catch (error) {
+     res.status(200).send({
+       success: false,
+       message: error.message,
+     })
+   }
+}    
       
 
 
 
-module.exports = { BrowsClassController,LeftBrowsClassController };
+module.exports = { BrowsClassController,LeftBrowsClassController,getOneDetailsController };
