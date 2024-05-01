@@ -2,9 +2,10 @@ require('dotenv').config(); // Load environment variables from .env file
 
 const express = require('express');
 
-// const http = require("http");
 const cors = require('cors');
-// const { Server } = require("socket.io");
+const http = require("http");
+const { Server } = require("socket.io");
+// const WebSocket = require('ws');
 
 const passport = require("passport");
 const session = require("express-session");
@@ -13,7 +14,7 @@ const session = require("express-session");
 const db = require("./models");
 
 // Remove the following line as it's not necessary
-const {User,Auth} = require("./models");
+const { User, Auth } = require("./models");
 // const {Auth} = require("./models");
 
 const { googleAuth } = require("./googleAuth/google.config");
@@ -37,32 +38,34 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'))
 
-// const server = http.createServer(app);
 
-// const io = new Server(server, {
-//     path: "/",
-//     cors:{
-//       origin:"http://localhost:5173",
-//       methods:["GET","POST"],
-//     },
-//     // allowEIO3: true,
-//   });
-  
+// const wss = new WebSocket.Server({ port: 5000 });
 
-// io.on("connection", (socket) => {
-//     console.log("A user connected");
-  
-//     socket.on("disconnect", () => {
-//       console.log("User disconnected");
-//     });
-//   });
+// wss.on('connection', function connection(ws) {
+//     console.log('A new client connected');
 
+// });
+
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+    },
+});
+
+
+io.on("connection", (socket) => {
+    console.log("User connected ", socket.id);
+});
 
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
         resave: false,   //reduce race condition
-        saveUninitialized: false,   
+        saveUninitialized: false,
         cookie: {
             secure: false,
             expires: new Date(Date.now() + 10000),   //in the static function then we can access it using it own name
@@ -72,10 +75,10 @@ app.use(
 );
 
 
-app.get("/",(req,res)=>{
-   res.status(200).send({
-      message:"Hello World"
-   })
+app.get("/", (req, res) => {
+    res.status(200).send({
+        message: "Hello World"
+    })
 })
 
 // Initialize Passport after express-session
@@ -114,10 +117,10 @@ app.use("/api/v1/class", GetClassTypeRoute);
 
 
 // post messages
-app.use("/api/v1/post_message",MessageRoute)
+app.use("/api/v1/post_message", MessageRoute)
 
 // Reply message
-app.use("/api/v1/send",ReplyRoute)
+app.use("/api/v1/send", ReplyRoute)
 
 
 // app.get("/", (req, res, next) => {
