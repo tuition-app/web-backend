@@ -8,6 +8,7 @@ app.use(express.json());
 app.use(express.static('public'))
 
 const http = require('http');
+const { Server } = require("socket.io");
 const WebSocket = require('ws');
 
 const passport = require("passport");
@@ -21,20 +22,39 @@ const { User, Auth } = require("./models");
 
 // const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
 
-wss.on('connection', (ws) => {
-    console.log('Client connected');
+const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:5173",
+      methods: ["GET", "POST"],
+    },
+  });
+ 
+io.on("connection", (socket) => {
+    console.log("User connected ", socket.id);
 
-    ws.on('message', (message) => {
-        console.log(`Received message: ${message}`);
-        ws.send(`You sent: ${message}`);
-    });
-
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
+    socket.on("send_message",(data)=>{
+        console.log("Message Received ",data);
+ 
+        io.emit("receive_message",data);
+    })
 });
+
+
+// const wss = new WebSocket.Server({ server });
+
+// wss.on('connection', (ws) => {
+//     console.log('Client connected');
+
+//     ws.on('message', (message) => {
+//         console.log(`Received message: ${message}`);
+//         ws.send(`You sent: ${message}`);
+//     });
+
+//     ws.on('close', () => {
+//         console.log('Client disconnected');
+//     });
+// });
 
 
 
