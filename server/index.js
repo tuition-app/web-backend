@@ -53,6 +53,7 @@ const GetPlatformRoute = require("./routes/GetPlatformRoute/GetPlatformRoute")
 const GetClassTypeRoute = require("./routes/GetClassTypeRoute/GetClassTypeRoute")
 const MessageRoute = require("./routes/MessageRoute/MessageRoute")
 const ReplyRoute = require("./routes/RepliedRoute/RepliedRoute")
+const UserProfileRoute = require("./routes/UserProfileRoute/UserProfileRoute")
 
 app.use(
     session({
@@ -113,6 +114,12 @@ app.use("/api/v1/post_message", MessageRoute)
 
 // Reply message
 app.use("/api/v1/send", ReplyRoute)
+
+
+// User profile route
+app.use("/api/v1/profile",UserProfileRoute)
+
+
 
 const PORT = process.env.PORT || 5000;
 
