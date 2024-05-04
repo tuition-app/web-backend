@@ -76,14 +76,14 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: false
             }
         },
         medium: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: false
             }
         },
         platform: {
@@ -91,7 +91,7 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: [], // Default value is an empty array
             validate: {
-                notEmpty: true
+                notEmpty: false
             }
         },
         type: {
@@ -99,7 +99,7 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: [], // Default value is an empty array
             validate: {
-                notEmpty: true
+                notEmpty: false
             }
         },
         areas: {
@@ -107,7 +107,7 @@ module.exports = (Sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: [], // Default value is an empty array
             validate: {
-                notEmpty: true
+                notEmpty: false
             }
         },
         UploadImageLink: {
