@@ -17,7 +17,7 @@ const PostClassRequestController = async (req, res) => {
     }
 
     const newPost = await PostClassRequest.create({
-      currentUserId: req.body.currentUserId,
+      currentUserId: currentUserId,
       displayName: user.displayName,
       ImageLink: user.ImageLink,
       email: user.email,

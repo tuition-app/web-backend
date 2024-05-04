@@ -1,4 +1,4 @@
-const { PostCreate } = require('../../models');
+const { PostCreate , PostClassRequest } = require('../../models');
 
 const BrowsClassController = async (req, res) => {
   try {
@@ -47,9 +47,6 @@ const BrowsClassController = async (req, res) => {
     });
   }
 };
-
-module.exports = BrowsClassController;
-
 
 
 const LeftBrowsClassController = async (req, res) => {
@@ -147,11 +144,13 @@ const getConsideringPostController = async (req, res) => {
    console.log(req.body);
    
    const createdPost = await PostCreate.findAll({where: {currentUserId: req.body.currentUserId,},});
+   const createdRequest = await PostClassRequest.findAll({where: {currentUserId: req.body.currentUserId,},});
 
    res.status(200).send({
      success: true,
      message: "Data fetched successfully",
-     data: createdPost,
+     createdPost: createdPost,
+     createdRequest: createdRequest,
    })
 
 

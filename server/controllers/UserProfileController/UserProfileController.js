@@ -36,6 +36,14 @@ const UserProfileEditController = async (req, res) => {
     let editData;
 
     const userData = await UserProfileModel.findOne({ where: { googleId: googleId } });
+    const authData = await Auth.findOne({ where: { googleId: googleId } });
+
+    console.log("authdata" , authData.ImageLink);
+
+    if (!req.file || req.file.path === undefined) {
+      // Assign a default image path
+      req.file = { path: authData.ImageLink };
+   }
 
     if (!userData) {
       editData = await UserProfileModel.create({

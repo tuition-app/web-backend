@@ -1,5 +1,5 @@
 // Import the postCreate model from the correct path
-const { PostCreate,Auth } = require('../../models');
+const { PostCreate, Auth } = require('../../models');
 
 
 const PostAddController = async (req, res) => {
@@ -9,19 +9,18 @@ const PostAddController = async (req, res) => {
 
     // Check if file upload was successful
     if (!req.file || req.file.path === undefined) {
-       // Assign a default image path
-       req.file = { path: "public\\image\\image_1713841993198.png" };
+      // Assign a default image path
+      req.file = { path: "public\\image\\image_1713841993198.png" };
     }
 
     // console.log("image path : ", req.file.path);
+    const areaArray = req.body.areas.split(',');
 
-    // Check if the 'areas' field is provided and not empty
-    if (!req.body.areas || req.body.areas.length === 0) {
-      return res.status(400).send({
-        success: false,
-        message: "Error: 'areas' field is required and cannot be empty."
-      });
-    }
+    console.log(req.body.areas);
+
+    const array = req.body.areas;
+    const length = array.length;
+    console.log("size",length); // Output: 1
 
     // Validate other fields if necessary
 
@@ -32,17 +31,18 @@ const PostAddController = async (req, res) => {
 
     // console.log("Data", data);
 
-    const priceNegotiable = req.body.negotiable === 'checked' ? true : false;
+    const priceNegotiable = req.body.negotiable === 'checked';
+    console.log(priceNegotiable);
 
     // Create a new post using the PostCreate model
     const result = await PostCreate.create({
-      currentUserId:req.body.id,
+      currentUserId: req.body.id,
       displayName: data.displayName,
       ImageLink: data.ImageLink,
       email: data.email,
       title: req.body.title,
       about: req.body.about,
-      fees: req.body.fees,
+      fees: priceNegotiable ? 0 : req.body.fees,
       perHour: req.body.perHour,
       perMonth: req.body.perMonth,
       subject: req.body.subject,
@@ -51,7 +51,7 @@ const PostAddController = async (req, res) => {
       type: req.body.type,
       areas: req.body.areas,
       UploadImageLink: req.file.path,
-      negotiable : priceNegotiable
+      negotiable: priceNegotiable
     });
 
     console.log(result);
@@ -73,57 +73,57 @@ const PostAddController = async (req, res) => {
 };
 
 
-const GetPostAddController = async(req,res)=>{
+const GetPostAddController = async (req, res) => {
   try {
     const CreatedPostData = await PostCreate.findAll({});
-     
-    if(!CreatedPostData){
+
+    if (!CreatedPostData) {
 
       res.status(404).send({
-         success:false,
-         message:"Not Found Created Post.",
+        success: false,
+        message: "Not Found Created Post.",
 
       })
     }
 
     res.status(200).send({
-       success:true,
-       message:"Post Created Data",
-       data:CreatedPostData
+      success: true,
+      message: "Post Created Data",
+      data: CreatedPostData
     })
   } catch (error) {
-   res.status(400).send({
-       success:false,
-       message:"Created Post Data Get Unsuccessfully.",
-       error:error.message
+    res.status(400).send({
+      success: false,
+      message: "Created Post Data Get Unsuccessfully.",
+      error: error.message
     })
   }
 }
 
 
-const imageUploadController = async(req,res)=>{
+const imageUploadController = async (req, res) => {
   //  console.log(req.file.path);
   console.log(req.body.id);
-   try {
-     const result = await PostCreate.findOne({where:{currentUserId:req.body.id}})
-     console.log(result);
+  try {
+    const result = await PostCreate.findOne({ where: { currentUserId: req.body.id } })
+    console.log(result);
 
-     result.UploadImageLink = req.file.path;
-     result.save();
+    result.UploadImageLink = req.file.path;
+    result.save();
 
-     res.status(200).send({
-       success:true,
-       message:"Image Uploaded Successfully.",
-       data:result
-     })
+    res.status(200).send({
+      success: true,
+      message: "Image Uploaded Successfully.",
+      data: result
+    })
 
-   } catch (error) {
-      res.status(400).send({
-         success:false,
-         message:"Image Upload Unsuccessfully.",
-         error:error.message
-      })
-   }
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Image Upload Unsuccessfully.",
+      error: error.message
+    })
+  }
 }
 
-module.exports = { PostAddController,GetPostAddController,imageUploadController };
+module.exports = { PostAddController, GetPostAddController, imageUploadController };
