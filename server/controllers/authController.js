@@ -21,4 +21,30 @@ const authController = async (req, res) => {
     }
 };
 
-module.exports = { authController };
+
+const getCurrentUserAuthData = async(req,res)=>{
+ try {
+    console.log(req.body);
+    const currentUserId = req.body.currentUserId
+
+    const authData = await Auth.findOne({
+        where: {
+            googleId: currentUserId
+        },
+    })
+
+    res.status(200).send({
+        success:true,
+        message:"User found",
+        data:authData
+    })
+    
+ } catch (error) {
+    res.status(400).send({
+        message:"Error in getCurrentUserAuthData",
+        error:error.message
+    })
+ }
+}
+
+module.exports = { authController , getCurrentUserAuthData };
