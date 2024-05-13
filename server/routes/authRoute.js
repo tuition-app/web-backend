@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const session = require("express-session");
-const { authController } = require("../controllers/authController");
+const { authController, getCurrentUserAuthData } = require("../controllers/authController");
 const cors = require('cors');
 
 
@@ -48,5 +48,11 @@ route.get("/login/success", (req, res) => {
 
 // Get curretn user all details
 route.post("/googleid", authController);
+
+
+// GET AUTH ROUTER || POST
+route.post("/auth",getCurrentUserAuthData )
+
+
 
 module.exports = route;

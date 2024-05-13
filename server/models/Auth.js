@@ -15,6 +15,20 @@ module.exports = (Sequelize, DataTypes)=>{
               notEmpty: true
            }
        },
+       updateProfileName:{
+           type: DataTypes.STRING,
+           allowNull: true,
+           validation:{
+              notEmpty: true
+           }
+       },
+       updateProfileImage:{
+           type: DataTypes.STRING,
+           allowNull: true,
+           validation:{
+              notEmpty: true
+           }
+       },
        email:{
            type: DataTypes.STRING,
            allowNull: false,

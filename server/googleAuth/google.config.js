@@ -2,6 +2,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { config } = require('./files');
 const { Auth } = require("../models");
 const jwt = require("jsonwebtoken");
+const { where } = require('sequelize');
 
 
 const googleAuth = (passport) => {
@@ -11,27 +12,56 @@ const googleAuth = (passport) => {
     clientSecret: config.GOOGLE_CLIENT_SECRET,
     callbackURL: config.REDIRECT_URI
 
-  }, (accessToken, refreshToken, profile, callback) => {
+  }, async (accessToken, refreshToken, profile, callback) => {
 
     console.log("Profile details are:", profile);
     // localStorage.setItem("profile", profile.id);
 
-    const token = jwt.sign({id:profile.id},process.env.JWT_SECRET,{expiresIn:"7d"});
+    const token = jwt.sign({ id: profile.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
     console.log(token);
 
     // localStorage.setItem("token",token);
+    const authData = await Auth.findOne({
+      where: {
+        googleId: profile.id
+      }
+    });
 
-    Auth.create({
-      googleId: profile.id,
-      displayName : profile.displayName,
-      email:profile.emails[0].value,
-      ImageLink : profile.photos[0].value,
-      emailVerified:profile.emails[0].verified,
-      jwt:token
+    if (!authData) {
+      Auth.create({
+        googleId: profile.id,
+        displayName: profile.displayName,
+        email: profile.emails[0].value,
+        ImageLink: profile.photos[0].value,
+        emailVerified: profile.emails[0].verified,
+        jwt: token
+      }).then((user) => {
+        console.log("Google signIn Successful and Database Data added successfully");
+      }).catch((error) => {
+        console.error("Error creating user:", error);
+      });
+    } else {
+      Auth.update({
+        displayName: profile.displayName,
+        email: profile.emails[0].value,
+        ImageLink: profile.photos[0].value,
+        emailVerified: profile.emails[0].verified,
+        jwt: token
+      }, {
+        where: {
+          googleId: profile.id
+        }
+      }).then((result) => {
+        if (result[0] === 1) {
+          console.log("Google signIn Successful and Database Data updated successfully");
+        } else {
+          console.log("Google signIn Successful but no changes were made to Database Data");
+        }
+      }).catch((error) => {
+        console.error("Error updating user:", error);
+      });
+    }
 
-    }).then((user) => {
-      console.log("Google signIn Successfull and Database Data added successfull");     
-    })
 
     callback(null, profile);
 

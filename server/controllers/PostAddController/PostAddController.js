@@ -37,7 +37,7 @@ const PostAddController = async (req, res) => {
     // Create a new post using the PostCreate model
     const result = await PostCreate.create({
       currentUserId: req.body.id,
-      displayName: data.displayName,
+      displayName: data.updateProfileName ? data.updateProfileName : data.displayName,
       ImageLink: data.ImageLink,
       email: data.email,
       title: req.body.title,

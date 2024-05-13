@@ -27,55 +27,29 @@ const UserProfileController = async(req,res)=>{
 const UserProfileEditController = async (req, res) => {
   console.log(req.body);
   console.log("image path : ", req.file);
-  const googleId = req.body.googleId || null;
-  const displayName = req.body.displayName || null;
-  const email = req.body.email || null;
-  const password = req.body.password || null;
+  // const googleId = req.body.googleId || null;
+  // const displayName = req.body.displayName || null;
+  // const email = req.body.email || null;
+  // const password = req.body.password || null;
 
   try {
-    let editData;
+    const authData = await Auth.findOne({ where: { googleId: req.body.googleId } });
 
-    const userData = await UserProfileModel.findOne({ where: { googleId: googleId } });
-    const authData = await Auth.findOne({ where: { googleId: googleId } });
-
-    console.log("authdata" , authData.ImageLink);
-
-    if (!req.file || req.file.path === undefined) {
-      // Assign a default image path
-      req.file = { path: authData.ImageLink };
-   }
-
-    if (!userData) {
-      editData = await UserProfileModel.create({
-        googleId: googleId,
-        fullName: displayName,
-        email: email,
-        UploadImageLink: req.file.path,
-        password : password
-        // Handle password securely, not setting it to null here
-      });
-
-    } else {
-      editData = await UserProfileModel.update(
-        {
-          fullName: displayName,
-          email: email,
-          UploadImageLink: req.file.path,
-          password: password,
-          // Handle password securely, not setting it to null here
-        },
-        {
-          where: { googleId: googleId },
-        }
-      );
+    if (authData) {
+      authData.updateProfileName = req.body.displayName || null;
+      authData.email = req.body.email;
+      authData.updateProfileImage = req.file.path || null;
     }
+
+    await authData.save();
 
     res.status(200).send({
       success: true,
-      message: "User Profile Updated",
-      editData: editData,
+      message:"User Profile Updated",
+      userData : authData
     });
 
+    
   } catch (error) {
     res.status(400).send({
       success: false,
