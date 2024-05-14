@@ -44,13 +44,13 @@ module.exports = (Sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
-        about: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                notEmpty: true
-            }
-        },
+        // about: {
+        //     type: DataTypes.STRING,
+        //     allowNull: false,
+        //     validate: {
+        //         notEmpty: true
+        //     }
+        // },
         fees: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -126,6 +126,14 @@ module.exports = (Sequelize, DataTypes) => {
         },
         // isAccepted
         isAccepted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            validate: {
+                notEmpty: true
+            }
+        },
+        // isAccepted
+        isDeleted: {
             type: DataTypes.BOOLEAN,
             allowNull: true,
             validate: {

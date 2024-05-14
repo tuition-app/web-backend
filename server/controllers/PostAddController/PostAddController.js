@@ -1,5 +1,5 @@
 // Import the postCreate model from the correct path
-const { PostCreate, Auth } = require('../../models');
+const { PostCreate, Auth , PostAddAbout } = require('../../models');
 
 
 const PostAddController = async (req, res) => {
@@ -29,6 +29,13 @@ const PostAddController = async (req, res) => {
     // Assume Auth and PostCreate models are properly defined
     const data = await Auth.findOne({ where: { googleId: currentUserId } });
 
+
+    // add data to the postaddabout table
+    const postAddAboutData = await PostAddAbout.create({
+      currentUserId: currentUserId,
+      about: req.body.about,
+    })
+
     // console.log("Data", data);
 
     const priceNegotiable = req.body.negotiable === 'checked';
@@ -41,7 +48,7 @@ const PostAddController = async (req, res) => {
       ImageLink: data.ImageLink,
       email: data.email,
       title: req.body.title,
-      about: req.body.about,
+      // about: req.body.about,
       fees: priceNegotiable ? 0 : req.body.fees,
       perHour: req.body.perHour,
       perMonth: req.body.perMonth,
@@ -60,7 +67,8 @@ const PostAddController = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Post Created Successfully",
-      data: result
+      data: result,
+      postAddAboutData:postAddAboutData
     });
   } catch (error) {
     // Handle errors and send an error response
