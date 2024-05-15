@@ -1,5 +1,5 @@
 // Import the postCreate model from the correct path
-const { PostCreate, Auth , PostAddAbout } = require('../../models');
+const { PostCreate, Auth, PostAddAbout, SelectAllOptionDistrict } = require('../../models');
 
 
 const PostAddController = async (req, res) => {
@@ -13,16 +13,29 @@ const PostAddController = async (req, res) => {
       req.file = { path: "public\\image\\image_1713841993198.png" };
     }
 
-    // console.log("image path : ", req.file.path);
-    const areaArray = req.body.areas.split(',');
+    const areaArray = req.body.areas.split(','); // Split by comma
+    // const selectedType = req.body.type.split(',');
 
-    console.log(req.body.areas);
+    // Assign select all option value to the area
+    const newData = await SelectAllOptionDistrict.findAll();
+    console.log("selected value", newData.length);
 
+    for (let i = 0; i < newData.length; i++) {
+      for (let j = 0; j < areaArray.length; j++) {
+        // console.log(newData[i].selectedOption[0].value);  
+      if(areaArray[j] === newData[i].selectedOption[0].value ){
+        areaArray[j] = newData[i].selectedOption[0].subValue;
+      }
+        
+      }
+    }
+
+    console.log("new array",areaArray)
+
+    // Create a new post using the PostCreate model
     const array = req.body.areas;
     const length = array.length;
-    console.log("size",length); // Output: 1
-
-    // Validate other fields if necessary
+    console.log("size", length); // Output: 1
 
     const currentUserId = req.body.id;
 
@@ -35,8 +48,6 @@ const PostAddController = async (req, res) => {
       currentUserId: currentUserId,
       about: req.body.about,
     })
-
-    // console.log("Data", data);
 
     const priceNegotiable = req.body.negotiable === 'checked';
     console.log(priceNegotiable);
@@ -56,7 +67,7 @@ const PostAddController = async (req, res) => {
       medium: req.body.medium,
       platform: req.body.platform,
       type: req.body.type,
-      areas: req.body.areas,
+      areas: areaArray,
       UploadImageLink: req.file.path,
       negotiable: priceNegotiable
     });
@@ -68,7 +79,7 @@ const PostAddController = async (req, res) => {
       success: true,
       message: "Post Created Successfully",
       data: result,
-      postAddAboutData:postAddAboutData
+      postAddAboutData: postAddAboutData
     });
   } catch (error) {
     // Handle errors and send an error response

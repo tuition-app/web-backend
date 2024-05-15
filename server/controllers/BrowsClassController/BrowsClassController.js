@@ -4,9 +4,9 @@ const BrowsClassController = async (req, res) => {
   try {
     console.log(req.body);
     // const { subject, location, sinhala, english, tamil, online, physical, group, individual, mass } = req.body;
-    const { subject, location, sinhala, english, tamil, selectedPlatform, group, individual, mass } = req.body;
+    const { subject, location, sinhala, english, tamil, selectedPlatform, group, individual, mass , selectType } = req.body;
 
-    console.log(subject, location, sinhala, english, tamil, selectedPlatform, group, individual);
+    console.log(subject, location, sinhala, english, tamil, selectedPlatform,selectType);
 
     const data = await PostCreate.findAll({}); // Assuming PostCreate is your Sequelize model
     const filteredData = data.filter(item => {
@@ -20,9 +20,10 @@ const BrowsClassController = async (req, res) => {
         shouldInclude = false;
       }
 
-      if (shouldInclude && (sinhala || english || tamil) && ![sinhala, english, tamil].includes(item.medium)) {
-        shouldInclude = false;
-      }
+      // console.log(sinhala);
+      // if(item.medium === sinhala){
+
+      // }
 
       // Assuming item.platform is a string like "Online,Physical"
       // and selectedPlatform is an array like ['Physical', 'Online']
@@ -32,9 +33,15 @@ const BrowsClassController = async (req, res) => {
       }
 
 
-      if ((group && !item.type.includes(group)) || (individual && !item.type.includes(individual)) || (mass && !item.type.includes(mass))) {
-        shouldInclude = false;
+      const itemType = item.type.split(','); // Splitting into an array
+      // console.log(itemType);
+
+      for (let i = 0; i < selectType.length; i++) {
+        if(itemType.includes(selectType[i])){
+          shouldInclude = true;
+        }
       }
+
 
       return shouldInclude;
     });

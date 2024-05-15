@@ -1,4 +1,4 @@
-const { PostClassRequest, Auth, PostCreate , Notification } = require('../../models');
+const { PostClassRequest, Auth, PostCreate, Notification, SelectAllOptionDistrict } = require('../../models');
 
 
 const PostClassRequestController = async (req, res) => {
@@ -8,6 +8,23 @@ const PostClassRequestController = async (req, res) => {
     const currentUserId = req.body.currentUserId;
 
     const user = await Auth.findOne({ where: { googleId: currentUserId } });
+
+    // Assign select all option value to the area
+    const newData = await SelectAllOptionDistrict.findAll();
+    console.log("selected value", newData.length);
+    console.log(req.body.area.length);
+
+    for (let i = 0; i < newData.length; i++) {
+      for (let j = 0; j < req.body.area.length; j++) {
+        // console.log(newData[i].selectedOption[0].value);  
+      if (req.body.area[j] === newData[i].selectedOption[0].value) {
+        req.body.area[j] = newData[i].selectedOption[0].subValue;
+      }
+        
+      }
+    }
+
+    console.log(req.body.area);
 
     if (!user) {
       return res.status(400).send({
@@ -104,21 +121,21 @@ const GetClassRequestController = async (req, res) => {
 
 
 const GetNotificationController = async (req, res) => {
- try {
-   const notificationResponse = await Notification.findAll({});
+  try {
+    const notificationResponse = await Notification.findAll({});
 
-   res.status(200).send({
-     success: true,
-     message: "Notification Fetch Successfully",
-     data: notificationResponse
-   })
- } catch (error) {
-   res.status(400).send({
-     success: false,
-     message: "Request Fetch Unsuccessfully",
-     error
-   })
- }
+    res.status(200).send({
+      success: true,
+      message: "Notification Fetch Successfully",
+      data: notificationResponse
+    })
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Request Fetch Unsuccessfully",
+      error
+    })
+  }
 }
 
 
