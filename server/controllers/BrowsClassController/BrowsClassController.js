@@ -3,12 +3,13 @@ const { PostCreate, PostClassRequest } = require('../../models');
 const BrowsClassController = async (req, res) => {
   try {
     console.log(req.body);
-    // const { subject, location, sinhala, english, tamil, online, physical, group, individual, mass } = req.body;
-    const { subject, location, sinhala, english, tamil, selectedPlatform, group, individual, mass , selectType } = req.body;
+    const { subject, location, sinhala, english, tamil, selectedPlatform, group, individual, mass, selectType } = req.body;
 
-    console.log(subject, location, sinhala, english, tamil, selectedPlatform,selectType);
+    console.log(subject, location, sinhala, english, tamil, selectedPlatform, selectType);
 
     const data = await PostCreate.findAll({}); // Assuming PostCreate is your Sequelize model
+
+    const mediumArray = [];
     const filteredData = data.filter(item => {
       let shouldInclude = true;
 
@@ -20,10 +21,11 @@ const BrowsClassController = async (req, res) => {
         shouldInclude = false;
       }
 
-      // console.log(sinhala);
-      // if(item.medium === sinhala){
-
-      // }
+      // Check mediums
+      const mediums = [sinhala, english, tamil];
+      if (mediums.includes(item.medium)) {
+        mediumArray.push(item);
+      }
 
       // Assuming item.platform is a string like "Online,Physical"
       // and selectedPlatform is an array like ['Physical', 'Online']
@@ -32,24 +34,24 @@ const BrowsClassController = async (req, res) => {
         shouldInclude = false;
       }
 
-
       const itemType = item.type.split(','); // Splitting into an array
-      // console.log(itemType);
 
-      for (let i = 0; i < selectType.length; i++) {
-        if(itemType.includes(selectType[i])){
-          shouldInclude = true;
-        }
+      if (selectType && selectType.length > 0) {
+        shouldInclude = selectType.some(type => itemType.includes(type));
       }
-
 
       return shouldInclude;
     });
 
+    // Combine mediumArray and filteredData, ensuring uniqueness
+    const combinedData = [...filteredData, ...mediumArray];
+    const uniqueData = Array.from(new Set(combinedData.map(item => item.id)))
+      .map(id => combinedData.find(item => item.id === id));
+
     res.status(200).send({
       success: true,
       message: "Data fetched successfully",
-      data: filteredData
+      data: uniqueData,
     });
 
   } catch (error) {
@@ -60,6 +62,8 @@ const BrowsClassController = async (req, res) => {
     });
   }
 };
+
+
 
 
 const LeftBrowsClassController = async (req, res) => {
