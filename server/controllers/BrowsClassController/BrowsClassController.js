@@ -3,13 +3,12 @@ const { PostCreate, PostClassRequest } = require('../../models');
 const BrowsClassController = async (req, res) => {
   try {
     console.log(req.body);
-    const { subject, location, sinhala, english, tamil, selectedPlatform, group, individual, mass, selectType } = req.body;
+    const { subject, location, sinhala, english, tamil, selectedPlatform, selectType } = req.body;
 
     console.log(subject, location, sinhala, english, tamil, selectedPlatform, selectType);
 
     const data = await PostCreate.findAll({}); // Assuming PostCreate is your Sequelize model
 
-    const mediumArray = [];
     const filteredData = data.filter(item => {
       let shouldInclude = true;
 
@@ -22,36 +21,34 @@ const BrowsClassController = async (req, res) => {
       }
 
       // Check mediums
-      const mediums = [sinhala, english, tamil];
-      if (mediums.includes(item.medium)) {
-        mediumArray.push(item);
-      }
+      const mediums = [];
+      if (sinhala) mediums.push(sinhala);
+      if (english) mediums.push(english);
+      if (tamil) mediums.push(tamil);
 
-      // Assuming item.platform is a string like "Online,Physical"
-      // and selectedPlatform is an array like ['Physical', 'Online']
-      const itemPlatforms = item.platform.split(','); // Splitting into an array
-      if (selectedPlatform && !itemPlatforms.some(platform => selectedPlatform.includes(platform.trim()))) {
+      if (mediums.length > 0 && !mediums.includes(item.medium)) {
         shouldInclude = false;
       }
 
-      const itemType = item.type.split(','); // Splitting into an array
+      // Check platforms
+      const itemPlatforms = item.platform.split(',').map(platform => platform.trim());
+      if (selectedPlatform && !selectedPlatform.some(platform => itemPlatforms.includes(platform))) {
+        shouldInclude = false;
+      }
 
-      if (selectType && selectType.length > 0) {
-        shouldInclude = selectType.some(type => itemType.includes(type));
+      // Check types
+      const itemType = item.type.split(',').map(type => type.trim());
+      if (selectType && selectType.length > 0 && !selectType.some(type => itemType.includes(type))) {
+        shouldInclude = false;
       }
 
       return shouldInclude;
     });
 
-    // Combine mediumArray and filteredData, ensuring uniqueness
-    const combinedData = [...filteredData, ...mediumArray];
-    const uniqueData = Array.from(new Set(combinedData.map(item => item.id)))
-      .map(id => combinedData.find(item => item.id === id));
-
     res.status(200).send({
       success: true,
       message: "Data fetched successfully",
-      data: uniqueData,
+      data: filteredData,
     });
 
   } catch (error) {
@@ -62,6 +59,7 @@ const BrowsClassController = async (req, res) => {
     });
   }
 };
+
 
 
 
