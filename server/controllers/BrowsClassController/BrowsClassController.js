@@ -12,34 +12,40 @@ const BrowsClassController = async (req, res) => {
     const filteredData = data.filter(item => {
       let shouldInclude = true;
 
+      // Check subject
       if (subject && item.subject !== subject) {
         shouldInclude = false;
       }
 
+      // Check location
       if (location && !item.areas.includes(location)) {
         shouldInclude = false;
       }
 
       // Check mediums
       const mediums = [];
-      if (sinhala) mediums.push(sinhala);
-      if (english) mediums.push(english);
-      if (tamil) mediums.push(tamil);
+      if (sinhala) mediums.push('Sinhala');
+      if (english) mediums.push('English');
+      if (tamil) mediums.push('Tamil');
 
       if (mediums.length > 0 && !mediums.includes(item.medium)) {
         shouldInclude = false;
       }
 
       // Check platforms
-      const itemPlatforms = item.platform.split(',').map(platform => platform.trim());
-      if (selectedPlatform && !selectedPlatform.some(platform => itemPlatforms.includes(platform))) {
-        shouldInclude = false;
+      if (selectedPlatform.length > 0) {
+        const itemPlatforms = item.platform.split(',').map(platform => platform.trim());
+        if (!selectedPlatform.some(platform => itemPlatforms.includes(platform))) {
+          shouldInclude = false;
+        }
       }
 
       // Check types
-      const itemType = item.type.split(',').map(type => type.trim());
-      if (selectType && selectType.length > 0 && !selectType.some(type => itemType.includes(type))) {
-        shouldInclude = false;
+      if (selectType.length > 0) {
+        const itemType = item.type.split(',').map(type => type.trim());
+        if (!selectType.some(type => itemType.includes(type))) {
+          shouldInclude = false;
+        }
       }
 
       return shouldInclude;
@@ -59,9 +65,6 @@ const BrowsClassController = async (req, res) => {
     });
   }
 };
-
-
-
 
 
 const LeftBrowsClassController = async (req, res) => {
