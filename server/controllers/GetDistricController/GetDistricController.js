@@ -1,4 +1,4 @@
-const {District} = require("../../models");
+const {District ,SelectAllOptionDistrict } = require("../../models");
 
 const GetDistricController = async(req,res) => {
      try {
@@ -29,4 +29,14 @@ const GetDistricController = async(req,res) => {
      }      
 }
 
-module.exports = {GetDistricController};
+
+
+const getSelectedAllOptionDistricts = async(req,res)=>{
+  const data = await SelectAllOptionDistrict.findAll();
+
+  res.status(200).send({
+     data:data,
+  })
+}
+
+module.exports = {GetDistricController,getSelectedAllOptionDistricts};

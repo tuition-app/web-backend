@@ -1,5 +1,5 @@
 // Import the postCreate model from the correct path
-const { PostCreate, Auth } = require('../../models');
+const { PostCreate, Auth, PostAddAbout, SelectAllOptionDistrict } = require('../../models');
 
 
 const PostAddController = async (req, res) => {
@@ -13,23 +13,41 @@ const PostAddController = async (req, res) => {
       req.file = { path: "public\\image\\image_1713841993198.png" };
     }
 
-    // console.log("image path : ", req.file.path);
-    const areaArray = req.body.areas.split(',');
+    const areaArray = req.body.areas.split(','); // Split by comma
+    // const selectedType = req.body.type.split(',');
 
-    console.log(req.body.areas);
+    // Assign select all option value to the area
+    const newData = await SelectAllOptionDistrict.findAll();
+    console.log("selected value", newData.length);
 
+    for (let i = 0; i < newData.length; i++) {
+      for (let j = 0; j < areaArray.length; j++) {
+        // console.log(newData[i].selectedOption[0].value);  
+      if(areaArray[j] === newData[i].selectedOption[0].value ){
+        areaArray[j] = newData[i].selectedOption[0].subValue;
+      }
+        
+      }
+    }
+
+    console.log("new array",areaArray)
+
+    // Create a new post using the PostCreate model
     const array = req.body.areas;
     const length = array.length;
-    console.log("size",length); // Output: 1
-
-    // Validate other fields if necessary
+    console.log("size", length); // Output: 1
 
     const currentUserId = req.body.id;
 
     // Assume Auth and PostCreate models are properly defined
     const data = await Auth.findOne({ where: { googleId: currentUserId } });
 
-    // console.log("Data", data);
+
+    // add data to the postaddabout table
+    const postAddAboutData = await PostAddAbout.create({
+      currentUserId: currentUserId,
+      about: req.body.about,
+    })
 
     const priceNegotiable = req.body.negotiable === 'checked';
     console.log(priceNegotiable);
@@ -41,7 +59,7 @@ const PostAddController = async (req, res) => {
       ImageLink: data.ImageLink,
       email: data.email,
       title: req.body.title,
-      about: req.body.about,
+      // about: req.body.about,
       fees: priceNegotiable ? 0 : req.body.fees,
       perHour: req.body.perHour,
       perMonth: req.body.perMonth,
@@ -49,7 +67,7 @@ const PostAddController = async (req, res) => {
       medium: req.body.medium,
       platform: req.body.platform,
       type: req.body.type,
-      areas: req.body.areas,
+      areas: areaArray,
       UploadImageLink: req.file.path,
       negotiable: priceNegotiable
     });
@@ -60,7 +78,8 @@ const PostAddController = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Post Created Successfully",
-      data: result
+      data: result,
+      postAddAboutData: postAddAboutData
     });
   } catch (error) {
     // Handle errors and send an error response
