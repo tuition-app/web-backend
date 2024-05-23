@@ -19,13 +19,25 @@ const db = require("./models");
 // Remove the following line as it's not necessary
 const { User, Auth } = require("./models");
 // const {Auth} = require("./models");
+// const allowedOrigins = ['http://localhost:3001'];
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   }
+// }));
 
 // const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+    //   origin: "http://localhost:5173",
+      origin: "http://localhost:3001",
       methods: ["GET", "POST"],
     },
   });
@@ -74,6 +86,7 @@ const GetClassTypeRoute = require("./routes/GetClassTypeRoute/GetClassTypeRoute"
 const MessageRoute = require("./routes/MessageRoute/MessageRoute")
 const ReplyRoute = require("./routes/RepliedRoute/RepliedRoute")
 const UserProfileRoute = require("./routes/UserProfileRoute/UserProfileRoute")
+const GetUserPostDescription = require("./routes/GetUserPostDescription/GetUserPostDescription")
 
 app.use(
     session({
@@ -138,6 +151,9 @@ app.use("/api/v1/send", ReplyRoute)
 
 // User profile route
 app.use("/api/v1/profile",UserProfileRoute)
+
+// get user description
+app.use("/api/v1/post",GetUserPostDescription)
 
 
 
