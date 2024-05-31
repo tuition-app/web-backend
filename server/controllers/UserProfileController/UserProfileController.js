@@ -64,7 +64,7 @@ const GetUserProfileEditDataController = async(req,res)=>{
     console.log(req.body);
     const currentUserId = req.body.currentUserId
 
-    const userData = await UserProfileModel.findOne({where:{ googleId:currentUserId }})
+    const userData = await Auth.findOne({where:{ googleId:currentUserId }})
 
     res.status(200).send({
       success:true,
