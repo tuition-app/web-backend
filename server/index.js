@@ -87,6 +87,8 @@ const MessageRoute = require("./routes/MessageRoute/MessageRoute")
 const ReplyRoute = require("./routes/RepliedRoute/RepliedRoute")
 const UserProfileRoute = require("./routes/UserProfileRoute/UserProfileRoute")
 const GetUserPostDescription = require("./routes/GetUserPostDescription/GetUserPostDescription")
+const FeedbackRoute = require("./routes/FeedbackRouter/FeedbackRouter")
+
 
 app.use(
     session({
@@ -154,6 +156,10 @@ app.use("/api/v1/profile",UserProfileRoute)
 
 // get user description
 app.use("/api/v1/post",GetUserPostDescription)
+
+
+// Post reviews
+app.use("/api/v1/review",FeedbackRoute)
 
 
 
