@@ -9,8 +9,23 @@ module.exports = (Sequelize, DataTypes)=>{
                    notEmpty: false
                 }
             },
+            reviewerName:{
+                type: DataTypes.STRING,
+                allowNull: true,
+                default:'',
+                validation:{
+                   notEmpty: false
+                }
+            },
             review:{
                 type: DataTypes.INTEGER,
+                allowNull: true,
+                validation:{
+                   notEmpty: true
+                }
+            },
+            description:{
+                type: DataTypes.STRING,
                 allowNull: true,
                 validation:{
                    notEmpty: true

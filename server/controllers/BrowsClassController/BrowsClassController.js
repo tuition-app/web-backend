@@ -139,7 +139,7 @@ const getOneDetailsController = async (req, res) => {
   try {
     console.log(req.body);
     const postId = req.body.postId;
-    const onePostDetails = await PostCreate.findOne({ where: { currentUserId: postId, }, });
+    const onePostDetails = await PostCreate.findOne({ where: { id: postId, }, });
 
     res.status(200).send({
       success: true,
