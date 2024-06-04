@@ -30,25 +30,35 @@ const FeedbackController = async (req, res) => {
 };
 
 
-const GetFeedbackController = async(req,res)=>{
+const GetFeedbackController = async (req, res) => {
   try {
-    console.log(req.body.postId);
+    const postId = req.body.postId;
+    const reviews = []
+    // Retrieve all feedback (replace with specific filters if needed)
+    const data = await FeedbackModel.findAll({});
 
-    const data = await FeedbackModel.findAll({postId:req.body.postId});
+    for (let i = 0; i < data.length; i++) {
+       if(data[i].postId == postId ){
+        reviews.push(data[i])
+       }
+      
+    }
 
     res.status(200).send({
       success: true,
-      message: "Review Added Successfully",
-      data: data
-    })
+      message: "Feedback retrieved successfully",
+      data:reviews
+    });
     
   } catch (error) {
-    res.status(400).send({
+    console.error(error); // Log the actual error for debugging
+
+    res.status(500).send({
       success: false,
-      message: "Error in GetFeedbackController",
-      error: error.message
-    })
+      message: "Internal server error",
+      error: "An error occurred while fetching feedback", // Generic user-friendly message
+    });
   }
-}
+};
 
 module.exports = { FeedbackController,GetFeedbackController };
