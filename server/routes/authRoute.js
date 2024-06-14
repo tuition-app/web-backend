@@ -16,7 +16,7 @@ route.use(session({
 
 // Use cors middleware with specific origin and credentials
 route.use(cors({
-    origin: 'http://localhost:3001', // Update with your frontend origin
+    origin:'http://localhost:3001', // Update with your frontend origin
     credentials: true
 }));
 
