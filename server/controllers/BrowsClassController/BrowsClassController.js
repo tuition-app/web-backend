@@ -183,5 +183,51 @@ const getConsideringPostController = async (req, res) => {
 
 
 
+// Add pagination
+const BrowsClassPaginationController = async (req, res) => {
+  try {
+    const { page } = req.body;
+    console.log(page);
 
-module.exports = { BrowsClassController, LeftBrowsClassController, getOneDetailsController, getConsideringPostController };
+    if(page == 0){
+      return null
+    }
+
+    // Default to page 1 if not provided
+    const pageNumber = page ? parseInt(page-1, 10) : 1; // Convert page to integer
+
+    // Define the limit per page
+    const limit = 5;
+
+    // Calculate the offset
+    const offset = (pageNumber) * limit;
+
+    // Fetch the posts with limit and offset
+    const post = await PostCreate.findAndCountAll({
+      limit,
+      offset,
+    });
+
+    res.status(200).send({
+      success: true,
+      message: "Data fetched successfully",
+      data: {
+        posts: post.rows,
+        total: post.count,
+        totalPages: Math.ceil(post.count / limit),
+        currentPage: pageNumber,
+      },
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+
+module.exports = { BrowsClassController, LeftBrowsClassController, getOneDetailsController, getConsideringPostController,BrowsClassPaginationController };
