@@ -1,5 +1,5 @@
 const express = require("express");
-const { BrowsClassController, LeftBrowsClassController, getOneDetailsController, getConsideringPostController } = require("../../controllers/BrowsClassController/BrowsClassController");
+const { BrowsClassController, LeftBrowsClassController, getOneDetailsController, getConsideringPostController, BrowsClassPaginationController } = require("../../controllers/BrowsClassController/BrowsClassController");
 
 const router = express.Router();
 
@@ -17,6 +17,10 @@ router.post("/OneDetails",getOneDetailsController)
 
 // POST || get considering people post
 router.post("/consideringPost",getConsideringPostController)
+
+
+// POST || pagination
+router.post("/pagination",BrowsClassPaginationController)
 
 
 
