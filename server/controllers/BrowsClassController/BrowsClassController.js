@@ -169,7 +169,7 @@ const getConsideringPostController = async (req, res) => {
     const pageNumber = parseInt(page, 10) || 1;
 
     // Define the limit per page
-    const limit = 5;
+    const limit = 3;
 
     // Calculate the skip based on pageNumber and limit
     const offset = (pageNumber - 1) * limit;
