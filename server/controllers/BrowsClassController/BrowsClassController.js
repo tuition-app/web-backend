@@ -162,24 +162,63 @@ const getConsideringPostController = async (req, res) => {
   try {
     console.log(req.body);
 
-    const createdPost = await PostCreate.findAll({ where: { currentUserId: req.body.currentUserId, }, });
-    const createdRequest = await PostClassRequest.findAll({ where: { currentUserId: req.body.currentUserId, }, });
+    const { page, currentUserId } = req.body;
+    console.log(page);
+
+    // Default to page 1 if not provided or invalid
+    const pageNumber = parseInt(page, 10) || 1;
+
+    // Define the limit per page
+    const limit = 3;
+
+    // Calculate the skip based on pageNumber and limit
+    const offset = (pageNumber - 1) * limit;
+
+    // Fetch created posts with pagination
+    const createdPost = await PostCreate.findAll({
+      where: { currentUserId },
+      limit,
+      offset
+    });
+
+    // Fetch total number of created posts
+    const totalCreatedPost = await PostCreate.count({
+      where: { currentUserId }
+    });
+
+    // Fetch created requests with pagination
+    const createdRequest = await PostClassRequest.findAll({
+      where: { currentUserId },
+      limit,
+      offset
+    });
+
+    // Fetch total number of created requests
+    const totalCreatedRequest = await PostClassRequest.count({
+      where: { currentUserId }
+    });
 
     res.status(200).send({
       success: true,
       message: "Data fetched successfully",
-      createdPost: createdPost,
-      createdRequest: createdRequest,
-    })
-
-
+      limit,
+      createdPost,
+      createdRequest,
+      totalCreatedPost,
+      totalCreatedRequest,
+      currentPage: pageNumber,
+      totalPagesPost: Math.ceil(totalCreatedPost / limit),
+      totalPagesRequest: Math.ceil(totalCreatedRequest / limit)
+    });
   } catch (error) {
+    console.error(error);
     res.status(400).send({
       success: false,
       message: error.message,
-    })
+    });
   }
-}
+};
+
 
 
 
@@ -189,12 +228,12 @@ const BrowsClassPaginationController = async (req, res) => {
     const { page } = req.body;
     console.log(page);
 
-    if(page == 0){
+    if (page == 0) {
       return null
     }
 
     // Default to page 1 if not provided
-    const pageNumber = page ? parseInt(page-1, 10) : 1; // Convert page to integer
+    const pageNumber = page ? parseInt(page - 1, 10) : 1; // Convert page to integer
 
     // Define the limit per page
     const limit = 5;
@@ -230,4 +269,4 @@ const BrowsClassPaginationController = async (req, res) => {
 
 
 
-module.exports = { BrowsClassController, LeftBrowsClassController, getOneDetailsController, getConsideringPostController,BrowsClassPaginationController };
+module.exports = { BrowsClassController, LeftBrowsClassController, getOneDetailsController, getConsideringPostController, BrowsClassPaginationController };
