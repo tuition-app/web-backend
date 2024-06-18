@@ -82,6 +82,4 @@ const GetUserProfileEditDataController = async(req,res)=>{
 }
 
 
-
-
 module.exports = {UserProfileController,UserProfileEditController,GetUserProfileEditDataController}
