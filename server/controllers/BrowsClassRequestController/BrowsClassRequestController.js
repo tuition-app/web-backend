@@ -31,10 +31,21 @@ const BrowsClassRequestController = async (req, res) => {
       if (sinhala) mediums.push('Sinhala');
       if (english) mediums.push('English');
       if (tamil) mediums.push('Tamil');
-
-      if (mediums.length > 0 && (!item.medium || !mediums.includes(item.medium))) {
-        shouldInclude = false;
+      
+      // console.log(mediums);
+      // console.log(item.medium);
+      
+      if (mediums.length > 0) {
+        // Ensure item.medium is an array
+        const itemMediums = Array.isArray(item.medium) 
+          ? item.medium 
+          : item.medium.split(',').map(medium => medium.trim());
+      
+        if (!mediums.some(medium => itemMediums.includes(medium))) {
+          shouldInclude = false;
+        }
       }
+      
 
       // Check platforms
       if (selectedPlatform.length > 0) {
