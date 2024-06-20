@@ -1,4 +1,5 @@
 const { PostCreate, PostClassRequest } = require('../../models');
+const { District } = require('../../models')
 
 const BrowsClassController = async (req, res) => {
   try {
@@ -7,8 +8,13 @@ const BrowsClassController = async (req, res) => {
 
     console.log(subject, location, sinhala, english, tamil, selectedPlatform, selectType);
 
-    const data = await PostCreate.findAll({}); // Assuming PostCreate is your Sequelize model
+    // Assuming PostCreate is your Sequelize model
+    const data = await PostCreate.findAll();
 
+    // Assuming District is your Sequelize model for districts
+    const districts = await District.findAll();
+
+    // Filtered data array
     const filteredData = data.filter(item => {
       let shouldInclude = true;
 
@@ -17,9 +23,27 @@ const BrowsClassController = async (req, res) => {
         shouldInclude = false;
       }
 
-      // Check location
-      if (location && !item.areas.includes(location)) {
-        shouldInclude = false;
+      // Check location and subValue match
+      if (location) {
+        let foundMatchingSubValue = false;
+        for (let i = 0; i < districts.length; i++) {
+          const district = districts[i];
+          if (location === district.district[0].subValue[0]) {
+            const subValues = district.district[0].subValue;
+            if (subValues.some(subValue => item.areas.includes(subValue))) {
+              foundMatchingSubValue = true;
+              break;
+            }
+          }
+          else{
+            if (item.areas.includes(location)) {
+              foundMatchingSubValue = true;
+            }
+          }
+        }
+        if (!foundMatchingSubValue) {
+          shouldInclude = false;
+        }
       }
 
       // Check mediums
@@ -28,14 +52,7 @@ const BrowsClassController = async (req, res) => {
       if (english) mediums.push('English');
       if (tamil) mediums.push('Tamil');
 
-      // console.log(mediums);
-      // console.log(item.medium);
-
-      // if (mediums.length > 0 && !mediums.includes(item.medium)) {
-      //   shouldInclude = false;
-      // }
-
-      if(mediums.length > 0){
+      if (mediums.length > 0) {
         const itemMediums = item.medium.split(',').map(medium => medium.trim());
         if (!mediums.some(medium => itemMediums.includes(medium))) {
           shouldInclude = false;
