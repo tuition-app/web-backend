@@ -28,8 +28,18 @@ const BrowsClassController = async (req, res) => {
       if (english) mediums.push('English');
       if (tamil) mediums.push('Tamil');
 
-      if (mediums.length > 0 && !mediums.includes(item.medium)) {
-        shouldInclude = false;
+      // console.log(mediums);
+      // console.log(item.medium);
+
+      // if (mediums.length > 0 && !mediums.includes(item.medium)) {
+      //   shouldInclude = false;
+      // }
+
+      if(mediums.length > 0){
+        const itemMediums = item.medium.split(',').map(medium => medium.trim());
+        if (!mediums.some(medium => itemMediums.includes(medium))) {
+          shouldInclude = false;
+        }
       }
 
       // Check platforms
