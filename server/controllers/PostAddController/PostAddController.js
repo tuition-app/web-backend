@@ -5,7 +5,7 @@ const { PostCreate, Auth, PostAddAbout, SelectAllOptionDistrict } = require('../
 const PostAddController = async (req, res) => {
   try {
     console.log(req.body);
-    // console.log("image path : ", req.file);
+    console.log("image path : ", req.file);
 
     // Check if file upload was successful
     if (!req.file || req.file.path === undefined) {
