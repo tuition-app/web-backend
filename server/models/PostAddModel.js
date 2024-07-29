@@ -44,13 +44,13 @@ module.exports = (Sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
-        // about: {
-        //     type: DataTypes.STRING,
-        //     allowNull: false,
-        //     validate: {
-        //         notEmpty: true
-        //     }
-        // },
+        about: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        },
         fees: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -65,11 +65,25 @@ module.exports = (Sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
+        perDay: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        },
         perMonth: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             validate: {
                 notEmpty: true
+            }
+        },
+        level:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: false
             }
         },
         subject: {
@@ -79,10 +93,17 @@ module.exports = (Sequelize, DataTypes) => {
                 notEmpty: false
             }
         },
+        grade:{
+            type: DataTypes.JSON,
+            allowNull: true,
+            defaultValue: [],
+            validate: {
+                notEmpty: false
+            }
+        },
         medium: {
-            type: DataTypes.JSON,   //store as a json directly
+            type: DataTypes.STRING,   //store as a json directly
             allowNull: false,
-            defaultValue: [], // Default value is an empty array
             validate: {
                 notEmpty: false
             }

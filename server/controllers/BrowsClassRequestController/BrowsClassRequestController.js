@@ -1,18 +1,16 @@
-const { PostClassRequest } = require("../../models")
+const { PostClassRequest, PostAddAbout } = require("../../models")
+
 
 const BrowsClassRequestController = async (req, res) => {
   try {
-    // Extracting parameters from request body
     console.log(req.body);
-    const { subject, location, sinhala, english, tamil, selectedPlatform, selectType } = req.body;
+    const { subject, location, sinhala, tamil, english, selectedPlatform, selectedType, selectedGrade } = req.body;
+    // const { subject, location } = req.body;
 
-    // Log the parameters for debugging
-    console.log(subject, location, sinhala, english, tamil, selectedPlatform, selectType);
+    // console.log(subject, location, sinhala, english, tamil, selectedPlatform, selectType);
 
-    // Fetch all class requests
-    const data = await PostClassRequest.findAll({});
+    const data = await PostClassRequest.findAll({}); // Assuming PostCreate is your Sequelize model
 
-    // Filter the data based on the criteria
     const filteredData = data.filter(item => {
       let shouldInclude = true;
 
@@ -22,8 +20,17 @@ const BrowsClassRequestController = async (req, res) => {
       }
 
       // Check location
-      if (location && (!item.areas || !item.areas.includes(location))) {
-        shouldInclude = false;
+      // if (location && !item.areas.includes(location)) {
+      //   shouldInclude = false;
+      // }
+      if (location && location.length > 0) {
+        const itemLocations = typeof item.areas === 'string'
+          ? JSON.parse(item.areas)
+          : item.areas;
+        
+        if (!location.some(loc => itemLocations.includes(loc))) {
+          shouldInclude = false;
+        }
       }
 
       // Check mediums
@@ -31,45 +38,44 @@ const BrowsClassRequestController = async (req, res) => {
       if (sinhala) mediums.push('Sinhala');
       if (english) mediums.push('English');
       if (tamil) mediums.push('Tamil');
-      
-      // console.log(mediums);
-      // console.log(item.medium);
-      
-      if (mediums.length > 0) {
-        // Ensure item.medium is an array
-        const itemMediums = Array.isArray(item.medium) 
-          ? item.medium 
-          : item.medium.split(',').map(medium => medium.trim());
-      
-        if (!mediums.some(medium => itemMediums.includes(medium))) {
-          shouldInclude = false;
-        }
+
+      if (mediums.length > 0 && !mediums.includes(item.medium)) {
+        shouldInclude = false;
       }
-      
 
       // Check platforms
-      if (selectedPlatform.length > 0) {
-        const itemPlatforms = item.platform.split(',').map(platform => platform.trim());
-        
-        console.log(itemPlatforms[0]);
-
-        if (!selectedPlatform.some(platform => itemPlatforms[0].includes(platform))) {
+      if (selectedPlatform && selectedPlatform.length > 0) {
+        const itemPlatforms = typeof item.platform === 'string' 
+          ? item.platform.split(',').map(platform => platform.trim()) 
+          : item.platform;
+        if (!selectedPlatform.some(platform => itemPlatforms.includes(platform))) {
           shouldInclude = false;
         }
       }
 
       // Check types
-      if (selectType.length > 0) {
-        const itemType = item.type.split(',').map(type => type.trim());
-        if (!selectType.some(type => itemType[0].includes(type))) {
+      if (selectedType && selectedType.length > 0) {
+        const itemTypes = typeof item.type === 'string' 
+          ? item.type.split(',').map(type => type.trim()) 
+          : item.type;
+        if (!selectedType.some(type => itemTypes.includes(type))) {
           shouldInclude = false;
         }
       }
 
+                 // Check grades
+                 if (selectedGrade && selectedGrade.length > 0) {
+                  const itemGrades = typeof item.grade === 'string' 
+                    ? item.grade.split(',').map(grade => grade.trim()) 
+                    : item.grade;
+                  if (!selectedGrade.some(grade => itemGrades.includes(grade))) {
+                    shouldInclude = false;
+                  }
+                }
+
       return shouldInclude;
     });
 
-    // Respond with the filtered data
     res.status(200).send({
       success: true,
       message: "Data fetched successfully",
@@ -84,6 +90,129 @@ const BrowsClassRequestController = async (req, res) => {
     });
   }
 };
+
+
+
+// const BrowsClassRequestController = async (req, res) => {
+//   try {
+//     // Extracting parameters from request body
+//     console.log(req.body);
+//     const { subject, location, sinhala, english, tamil, selectedPlatform, selectType } = req.body;
+
+//     // Log the parameters for debugging
+//     console.log(subject, location, sinhala, english, tamil, selectedPlatform, selectType);
+
+//     // Fetch all class requests
+//     const data = await PostClassRequest.findAll({});
+
+//     // Filter the data based on the criteria
+//     const filteredData = data.filter(item => {
+//       let shouldInclude = true;
+
+//       // Check subject
+//       if (subject && item.subject !== subject) {
+//         shouldInclude = false;
+//       }
+
+//       // Check location
+//       if (location && (!item.areas || !item.areas.includes(location))) {
+//         shouldInclude = false;
+//       }
+
+//       // Check mediums
+//       const mediums = [];
+//       if (sinhala) mediums.push('Sinhala');
+//       if (english) mediums.push('English');
+//       if (tamil) mediums.push('Tamil');
+      
+//       // console.log(mediums);
+//       // console.log(item.medium);
+      
+//       if (mediums.length > 0) {
+//         // Ensure item.medium is an array
+//         const itemMediums = Array.isArray(item.medium) 
+//           ? item.medium 
+//           : item.medium.split(',').map(medium => medium.trim());
+      
+//         if (!mediums.some(medium => itemMediums.includes(medium))) {
+//           shouldInclude = false;
+//         }
+//       }
+      
+
+//       // Check platforms
+//       if (selectedPlatform.length > 0) {
+//         const itemPlatforms = item.platform.split(',').map(platform => platform.trim());
+        
+//         console.log(itemPlatforms[0]);
+
+//         if (!selectedPlatform.some(platform => itemPlatforms[0].includes(platform))) {
+//           shouldInclude = false;
+//         }
+//       }
+
+//       // Check types
+//       if (selectType.length > 0) {
+//         const itemType = item.type.split(',').map(type => type.trim());
+//         if (!selectType.some(type => itemType[0].includes(type))) {
+//           shouldInclude = false;
+//         }
+//       }
+
+//       return shouldInclude;
+//     });
+
+//     // Respond with the filtered data
+//     res.status(200).send({
+//       success: true,
+//       message: "Data fetched successfully",
+//       data: filteredData,
+//     });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).send({
+//       success: false,
+//       message: error.message
+//     });
+//   }
+// };
+
+
+const getOneDetailsController = async (req, res) => {
+  try {
+    console.log(req.body);
+    const requestId = req.body.requestId;
+    const oneRequestDetails = await PostClassRequest.findOne({ where: { id: requestId, }, });
+
+    console.log(oneRequestDetails);
+
+    const aboutDetails = await PostAddAbout.findOne({ where: { id: oneRequestDetails['about'] } });
+
+    const requestDetailsWithAbout = {
+      ...oneRequestDetails.toJSON(),
+      aboutDetails : aboutDetails.about
+    };
+
+    console.log(requestDetailsWithAbout);
+
+    res.status(200).send({
+      success: true,
+      message: "Data fetched successfully",
+      data: requestDetailsWithAbout,
+    });
+
+  } catch (error) {
+    res.status(200).send({
+      success: false,
+      message: error.message,
+    })
+  }
+}
+
+
+
+
 
 const FilterClassRequestController = async (req, res) => {
   try {
@@ -175,4 +304,4 @@ const BrowsClassRequestPaginationController = async (req, res) => {
   }
 };
 
-module.exports = { BrowsClassRequestController, FilterClassRequestController,BrowsClassRequestPaginationController }
+module.exports = { BrowsClassRequestController, FilterClassRequestController,BrowsClassRequestPaginationController, getOneDetailsController }

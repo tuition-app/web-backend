@@ -53,29 +53,43 @@ module.exports = (Sequelize, DataTypes) => {
         // },
         perHour: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
             validate: {
                 notEmpty: true
             }
         },
         perMonth: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
             validate: {
                 notEmpty: true
+            }
+        },
+        level:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: false
             }
         },
         subject: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: false
+            }
+        },
+        grade:{
+            type: DataTypes.JSON,
+            allowNull: true,
+            defaultValue: [],
+            validate: {
+                notEmpty: false
             }
         },
         medium: {
-            type: DataTypes.JSON,   //store as a json directly
+            type: DataTypes.STRING,   //store as a json directly
             allowNull: false,
-            defaultValue: [], // Default value is an empty array
             validate: {
                 notEmpty: true
             }
@@ -112,7 +126,13 @@ module.exports = (Sequelize, DataTypes) => {
                 notEmpty: true
             }
         },
-
+        isDeleted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            validate: {
+                notEmpty: true
+            }
+        },
 
     })
 

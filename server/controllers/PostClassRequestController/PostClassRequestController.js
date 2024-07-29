@@ -1,4 +1,5 @@
-const { PostClassRequest, Auth, PostCreate, Notification, SelectAllOptionDistrict } = require('../../models');
+const { where } = require('sequelize');
+const { PostClassRequest, Auth, PostCreate, Notification, SelectAllOptionDistrict, PostAddAbout } = require('../../models');
 
 
 const PostClassRequestController = async (req, res) => {
@@ -7,7 +8,7 @@ const PostClassRequestController = async (req, res) => {
 
     const currentUserId = req.body.currentUserId;
 
-    const user = await Auth.findOne({ where: { googleId: currentUserId } });
+    const user = await Auth.findOne({ where: { id: currentUserId } });
 
     // Assign select all option value to the area
     const newData = await SelectAllOptionDistrict.findAll();
@@ -20,7 +21,7 @@ const PostClassRequestController = async (req, res) => {
       if (req.body.area[j] === newData[i].selectedOption[0].value) {
         req.body.area[j] = newData[i].selectedOption[0].subValue;
       }
-        
+      
       }
     }
 
@@ -33,17 +34,26 @@ const PostClassRequestController = async (req, res) => {
       });
     }
 
+            // add data to the postaddabout table
+            const postAddAboutData = await PostAddAbout.create({
+              currentUserId: currentUserId,
+              about: req.body.about,
+              // postId: result['dataValues']['id']
+            })
+
 const newPost = await PostClassRequest.create({
-      currentUserId: req.body.currentUserId,
+      currentUserId: currentUserId,
       displayName: user.updateProfileName ? user.updateProfileName : user.displayName,
       ImageLink: user.ImageLink,
       email: user.email,
-      title: req.body.title,
-      about: req.body.about,
+      title: 'default',
+      about: postAddAboutData['dataValues']['id'],
       // fees: req.body.fees,
-      perHour: req.body.perHour,
-      perMonth: req.body.perMonth,
+      // perHour: req.body.perHour,
+      // perMonth: req.body.perMonth,
       subject: req.body.subject,
+      level: req.body.level,
+      grade: req.body.grade || null,
       medium: req.body.medium,
       platform: req.body.platform,
       type: req.body.type,
@@ -65,7 +75,7 @@ const newPost = await PostClassRequest.create({
 
     for (let i = 0; i < matchingPosts.length; i++) {
       const matchingRecord = await Notification.findOne({
-        where: { googleId: matchingPosts[i].currentUserId }
+        where: { id: matchingPosts[i].currentUserId }
       });
 
       // console.log("matching Record :",matchingRecord);
@@ -76,7 +86,7 @@ const newPost = await PostClassRequest.create({
       } else {
         // Create a new notification record
         await Notification.create({
-          googleId: matchingPosts[i].currentUserId,
+          userId: matchingPosts[i].currentUserId,
           notification: matchingPosts[i]
         });
       }
@@ -122,7 +132,9 @@ const GetClassRequestController = async (req, res) => {
 
 const GetNotificationController = async (req, res) => {
   try {
-    const notificationResponse = await Notification.findAll({});
+    const currentUserId = req.body.currentUserId;
+
+    const notificationResponse = await Notification.findAll({where: {googleId: currentUserId}});
 
     res.status(200).send({
       success: true,

@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const session = require("express-session");
-const { authController, getCurrentUserAuthData } = require("../controllers/authController");
+const { authController, getCurrentUserAuthData, registerAuthData, registerGoogleAuthData, signInAuth } = require("../controllers/authController");
 const cors = require('cors');
 
 
@@ -48,6 +48,11 @@ route.get("/login/success", (req, res) => {
 
 // Get curretn user all details
 route.post("/googleid", authController);
+
+
+route.post("/registerAuth", registerAuthData);
+route.post("/registerGoogleAuth", registerGoogleAuthData);
+route.post("/signInAuth", signInAuth);
 
 
 // GET AUTH ROUTER || POST

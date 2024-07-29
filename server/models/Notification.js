@@ -1,7 +1,7 @@
 module.exports = (Sequelize, DataTypes) => {
 
     const Notification = Sequelize.define("Notification", {
-        googleId:{
+        userId:{
             type: DataTypes.STRING,
             allowNull: false,
             validation:{

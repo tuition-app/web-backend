@@ -26,7 +26,7 @@ router.post("/user_details", UserProfileController)
 
 
 // POST || edit user Profile
-router.post("/edit_user_details",upload.single('image'), UserProfileEditController)
+router.post("/edit_user_details", upload.fields([{ name: 'profileImage' }, { name: 'nicImage' }]), UserProfileEditController);
 
 
 // POST || get edited data

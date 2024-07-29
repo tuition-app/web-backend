@@ -11,7 +11,7 @@ router.get("/get-request",GetClassRequestController)
 
 
 // GET || GET CREATED CLASS REQUEST
-router.get("/get-notification",GetNotificationController)
+router.post("/get-notification",GetNotificationController)
 
 
 module.exports = router;

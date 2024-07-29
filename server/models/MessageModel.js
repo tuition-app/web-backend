@@ -33,6 +33,13 @@ module.exports = (Sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: false,
             // defaultValue: Sequelize.NOW
+        },
+        isRead : {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            validation: {
+                notEmpty: true
+            }
         }
     });
 

@@ -9,6 +9,13 @@ module.exports = (Sequelize, DataTypes) => {
                     notEmpty: true
                 }
             },
+            // postId: {
+            //     type: DataTypes.STRING,
+            //     allowNull: false,
+            //     validate: {
+            //         notEmpty: true
+            //     }
+            // },
             about: {
                 type: DataTypes.STRING,
                 allowNull: false,

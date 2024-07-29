@@ -1,5 +1,5 @@
 const express = require('express');
-const { MessageController, MessageDataController } = require('../../controllers/MessageController/MessageController');
+const { MessageController, MessageDataController, ChatListController,MarkMessagesAsRead } = require('../../controllers/MessageController/MessageController');
 const router = express.Router();
 
 
@@ -9,6 +9,10 @@ router.post("/data",MessageController)
 // POST || messages
 router.post("/messageData",MessageDataController)
 
+
+router.post("/chatList", ChatListController)
+
+router.post('/markAsRead', MarkMessagesAsRead); 
 
 
 module.exports = router;
