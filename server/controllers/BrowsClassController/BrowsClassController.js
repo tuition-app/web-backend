@@ -9,7 +9,11 @@ const BrowsClassController = async (req, res) => {
 
     // console.log(subject, location, sinhala, english, tamil, selectedPlatform, selectType);
 
-    const data = await PostCreate.findAll({}); // Assuming PostCreate is your Sequelize model
+    const data = await PostCreate.findAll({where: {
+      isDeleted: false,
+      isExpired:false,
+      isAccepted:false
+    }}); // Assuming PostCreate is your Sequelize model
 
     const filteredData = data.filter(item => {
       let shouldInclude = true;

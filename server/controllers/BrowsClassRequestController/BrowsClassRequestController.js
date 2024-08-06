@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const { PostClassRequest, PostAddAbout } = require("../../models")
 
 
@@ -9,7 +10,11 @@ const BrowsClassRequestController = async (req, res) => {
 
     // console.log(subject, location, sinhala, english, tamil, selectedPlatform, selectType);
 
-    const data = await PostClassRequest.findAll({}); // Assuming PostCreate is your Sequelize model
+    const data = await PostClassRequest.findAll({ where : {
+      isAccepted: false,
+      isDeleted: false,
+      isExpired: false
+    }}); // Assuming PostCreate is your Sequelize model
 
     const filteredData = data.filter(item => {
       let shouldInclude = true;

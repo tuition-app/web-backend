@@ -88,7 +88,8 @@ const ReplyRoute = require("./routes/RepliedRoute/RepliedRoute")
 const UserProfileRoute = require("./routes/UserProfileRoute/UserProfileRoute")
 const GetUserPostDescription = require("./routes/GetUserPostDescription/GetUserPostDescription")
 const FeedbackRoute = require("./routes/FeedbackRouter/FeedbackRouter")
-
+const NotificationRoute = require("./routes/NotificationRoute/NotificationRoute")
+const AdvertisementRoute = require("./routes/AdvertisementRoute/AdvertisementRoute")
 
 app.use(
     session({
@@ -161,7 +162,11 @@ app.use("/api/v1/post",GetUserPostDescription)
 // Post reviews
 app.use("/api/v1/review",FeedbackRoute)
 
+// Notifications
+app.use("/api/v1/notification", NotificationRoute);
 
+// Advertisement
+app.use("/api/v1/advertisement", AdvertisementRoute);
 
 const PORT = process.env.PORT || 3001;
 

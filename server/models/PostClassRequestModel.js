@@ -120,7 +120,14 @@ module.exports = (Sequelize, DataTypes) => {
         },
         // isAccepted
         isAccepted: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+            validate: {
+                notEmpty: true
+            }
+        },
+        isExpired: {
+            type: DataTypes.BOOLEAN,
             allowNull: true,
             validate: {
                 notEmpty: true

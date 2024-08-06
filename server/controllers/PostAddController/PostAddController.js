@@ -1,6 +1,7 @@
 // Import the postCreate model from the correct path
-const { PostCreate, Auth, PostAddAbout, PostClassRequest, SelectAllOptionDistrict } = require('../../models');
-
+const { PostCreate, Auth, PostAddAbout, PostClassRequest, SelectAllOptionDistrict, PostNotification, RequestNotification } = require('../../models');
+const { Op, Sequelize } = require('sequelize');
+const moment = require('moment-timezone');
 
 const PostAddController = async (req, res) => {
   try {
@@ -13,7 +14,7 @@ const PostAddController = async (req, res) => {
       req.file = { path: "public\\image\\image_1713841993198.png" };
     }
 
-    const areaArray = req.body.areas.split(','); // Split by comma
+    const areaArray = req.body.areas.split(','); 
     const selectedTypes = req.body.type.split(',');
     const selectedPlatforms = req.body.platform.split(',');
     const selectedGrades = req.body.grade.split(',');
@@ -75,49 +76,52 @@ const PostAddController = async (req, res) => {
       areas: areaArray,
       UploadImageLink: req.file.path,
       negotiable: req.body.negotiable,
+      isExpired: false,
+      isAccepted: false,
+      isDeleted: false
     });
 
     console.log(result);
 
 
 
-    //       // Find matching posts based on criteria
-    // const matchingRequests = await PostClassRequest.findAll({
-    //   where: {
-    //     // fees: req.body.fees,
-    //     subject: req.body.subject,
-    //     medium: req.body.medium,
-    //     platform: req.body.platform,
-    //     type: req.body.type
-    //   }
-    // });
+          // Find matching posts based on criteria
+    const matchingRequests = await PostClassRequest.findAll({
+      where: {
+        // fees: req.body.fees,
+        subject: req.body.subject,
+        medium: req.body.medium,
+        [Op.and]: [
+          Sequelize.literal(`JSON_CONTAINS(platform, '["${selectedPlatforms.join('","')}"]')`),
+          Sequelize.literal(`JSON_CONTAINS(type, '["${selectedTypes.join('","')}"]')`)
+        ],
+        isAccepted: false,
+        isDeleted: false,
+        isExpired: false
+      }
+    });
 
-    // console.log("Matching Requests:", matchingRequests);
+    console.log("Matching Requests:", matchingRequests);
 
-    // for (let i = 0; i < matchingRequests.length; i++) {
-    //   const matchingRecord = await Notification.findOne({
-    //     where: { googleId: matchingRequests[i].currentUserId }
-    //   });
+    for (let i = 0; i < matchingRequests.length; i++) {
+      // const matchingRecord = await Notification.findOne({
+      //   where: { googleId: matchingRequests[i].currentUserId }
+      // });
 
-    //   // console.log("matching Record :",matchingRecord);
+      // console.log("matching Record :",matchingRecord);
 
-    //   if (matchingRecord) {
-    //     // Update the existing notification record
-    //     await matchingRecord.update({ notification: matchingRequests[i] });
-    //   } else {
-    //     // Create a new notification record
-    //     await Notification.create({
-    //       googleId: matchingRequests[i].currentUserId,
-    //       notification: matchingRequests[i]
-    //     });
-    //   }
-    // }
+      // if (matchingRecord) {
+      //   // Update the existing notification record
+      //   await matchingRecord.update({ notification: matchingRequests[i] });
+      // } else {
+        // Create a new notification record
+        await PostNotification.create({
+          userId: matchingRequests[i].currentUserId,
+          notification: result
+        });
+      // }
+    }
 
-    // res.status(200).send({
-    //   success: true,
-    //   message: "Post Request Created Successfully",
-    //   data: matchingPosts,
-    // });
 
     // Send a success response with the created post data
     res.status(200).send({
@@ -126,6 +130,7 @@ const PostAddController = async (req, res) => {
       data: result,
       postAddAboutData: postAddAboutData,
     });
+
   } catch (error) {
     // Handle errors and send an error response
     res.status(400).send({
@@ -150,15 +155,162 @@ const GetPostAddController = async (req, res) => {
       })
     }
 
+    // const threeMonthsAgo = new Date();
+    // threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+    // for (let post of CreatedPostData) {
+    //   if (new Date(post.updatedAt) < threeMonthsAgo) {
+    //     post.isExpired = true;
+    //     await post.save();
+    //   }
+    // }
+
+    const fiveMinutesAgo = moment.tz('Asia/Kolkata').subtract(5, 'hours').toDate();
+
+    const updatedPosts = await Promise.all(CreatedPostData.map(async (post) => {
+      // console.log(post.createdAt);
+      // console.log(fiveMinutesAgo);
+      if (new Date(post.updatedAt) < fiveMinutesAgo) {
+        post.isExpired = true;
+        await post.save();
+      }
+      return post;
+    }));
+
+    const posts = await PostCreate.findAll({ where: { isExpired: false, isAccepted: false, isDeleted: false } }); 
+
     res.status(200).send({
       success: true,
       message: "Post Created Data",
-      data: CreatedPostData
+      data: posts
     })
   } catch (error) {
     res.status(400).send({
       success: false,
       message: "Created Post Data Get Unsuccessfully.",
+      error: error.message
+    })
+  }
+}
+
+const GetAllPostController = async (req, res) => {
+  try {
+    const CreatedPostData = await PostCreate.findAll({});
+
+    if (!CreatedPostData) {
+
+      res.status(404).send({
+        success: false,
+        message: "Not Found Created Post.",
+
+      })
+    }
+
+    // const threeMonthsAgo = new Date();
+    // threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+    // for (let post of CreatedPostData) {
+    //   if (new Date(post.updatedAt) < threeMonthsAgo) {
+    //     post.isExpired = true;
+    //     await post.save();
+    //   }
+    // }
+
+    const fiveMinutesAgo = moment.tz('Asia/Kolkata').subtract(5, 'hours').toDate();
+
+    const updatedPosts = await Promise.all(CreatedPostData.map(async (post) => {
+      // console.log(post.createdAt);
+      // console.log(fiveMinutesAgo);
+      if (new Date(post.updatedAt) < fiveMinutesAgo) {
+        post.isExpired = true;
+        await post.save();
+      }
+      return post;
+    }));
+
+    const posts = await PostCreate.findAll({ where: { isDeleted: false } });
+
+    res.status(200).send({
+      success: true,
+      message: "Post Created Data",
+      data: posts
+    })
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Created Post Data Get Unsuccessfully.",
+      error: error.message
+    })
+  }
+}
+
+const acceptedController = async (req, res) => {
+  try {
+    const { id } = req.body.id;
+    const post = await PostCreate.findOne({ where: {id: req.body.id} });
+
+    post.isAccepted = true;
+    await post.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Post Accepted Successfully",
+      data: post
+    })
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Post Accepted Unsuccessfully",
+      error: error.message
+    })
+  }
+}
+
+const deleteController = async (req, res) => {
+  try {
+    console.log(req.body.id);
+
+    const { id } = req.body.id;
+    const post = await PostCreate.findOne({ where: { id: req.body.id } });
+
+    post.isDeleted = true;
+    await post.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Post Deleted Successfully",
+      data: post
+    })
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Post Rejected Unsuccessfully",
+      error: error.message
+    })
+  }
+}
+
+
+const retainController = async (req, res) => {
+  try {
+
+    console.log(req.body.id);
+    const { id } = req.body.id;
+    const post = await PostCreate.findOne({ where: { id: req.body.id } });
+
+    post.isExpired = false;
+    post.createdAt = moment().toDate();
+    await post.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Post Reatined Successfully",
+      data: post
+    })
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Post Retaining Unsuccessfull",
       error: error.message
     })
   }
@@ -190,4 +342,4 @@ const imageUploadController = async (req, res) => {
   }
 }
 
-module.exports = { PostAddController, GetPostAddController, imageUploadController };
+module.exports = { PostAddController, GetPostAddController, imageUploadController, acceptedController, deleteController, retainController, GetAllPostController };

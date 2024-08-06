@@ -1,5 +1,5 @@
 const express = require("express");
-const { PostAddController, GetPostAddController,imageUploadController } = require("../../controllers/PostAddController/PostAddController");
+const { PostAddController, GetPostAddController,imageUploadController, acceptedController, deleteController, retainController, GetAllPostController } = require("../../controllers/PostAddController/PostAddController");
 const multer = require('multer');
 const path = require('path');
 
@@ -25,6 +25,14 @@ router.post("/post" ,upload.single('image') ,PostAddController)
 
 // GET || GET DATA
 router.get("/get-post",GetPostAddController)
+
+router.post("/accept-post",acceptedController)
+
+router.post("/delete-post",deleteController)
+
+router.post("/retain-post", retainController)
+
+router.get("/all-post", GetAllPostController)
 
 
 // // Upload images
